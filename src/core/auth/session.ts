@@ -1,5 +1,5 @@
-import { demoSession } from '@/lib/demo-data';
+import { auth } from '@/core/auth/auth';
 
 export async function getCurrentSession() {
-  return demoSession;
+  return auth();
 }

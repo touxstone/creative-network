@@ -7,7 +7,10 @@ services:
       - "3000:3000"
     environment:
       DATABASE_URL: postgresql://creative:creative@postgres:5432/creative_network?schema=public
+      DATABASE_URL_UNPOOLED: postgresql://creative:creative@postgres:5432/creative_network?schema=public
+      AUTH_SECRET: replace-with-a-32-character-secret
       NEXTAUTH_SECRET: replace-with-a-32-character-secret
+      AUTH_URL: http://localhost:3000
       NEXTAUTH_URL: http://localhost:3000
       AUTH_TRUST_HOST: "true"
     volumes:
@@ -42,6 +45,7 @@ services:
       - "5555:5555"
     environment:
       DATABASE_URL: postgresql://creative:creative@postgres:5432/creative_network?schema=public
+      DATABASE_URL_UNPOOLED: postgresql://creative:creative@postgres:5432/creative_network?schema=public
     volumes:
       - .:/app
       - node_modules:/app/node_modules

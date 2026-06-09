@@ -1,36 +1,48 @@
 import Link from 'next/link';
 import { LogIn } from 'lucide-react';
+import { loginAction } from '@/core/auth/actions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-export default function LoginPage() {
+interface LoginPageProps {
+  searchParams?: Promise<{
+    error?: string;
+  }>;
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const params = await searchParams;
+
   return (
     <main className="grid min-h-screen place-items-center bg-background px-4 py-10">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Sign in</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Demo credentials are not enforced in this first showable slice.
+            Access your workspace and continue building your creative network.
           </p>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4">
+          <form action={loginAction} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" placeholder="you@example.com" />
+              <Input id="email" name="email" type="email" placeholder="you@example.com" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" name="password" type="password" />
+              <Input id="password" name="password" type="password" minLength={8} required />
             </div>
-            <Link href="/dashboard" className="block">
-              <Button type="button" className="w-full">
-                <LogIn className="h-4 w-4" />
-                Continue to workspace
-              </Button>
-            </Link>
+            {params?.error ? (
+              <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {params.error}
+              </div>
+            ) : null}
+            <Button type="submit" className="w-full">
+              <LogIn className="h-4 w-4" />
+              Continue to workspace
+            </Button>
           </form>
           <p className="mt-5 text-center text-sm text-muted-foreground">
             New here?{' '}

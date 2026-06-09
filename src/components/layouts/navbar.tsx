@@ -1,15 +1,25 @@
 import Link from 'next/link';
-import { Bell, BriefcaseBusiness, MessageSquare, Network, Search, UserRound } from 'lucide-react';
+import { Bell, BriefcaseBusiness, LogOut, MessageSquare, Network, Search, UserRound } from 'lucide-react';
+import type { Session } from 'next-auth';
+import { logoutAction } from '@/core/auth/actions';
 import { Button } from '@/components/ui/button';
 
-const navItems = [
+function getNavItems(userId: string) {
+  return [
   { href: '/dashboard', label: 'Dashboard', icon: BriefcaseBusiness },
   { href: '/feed', label: 'Lounge', icon: MessageSquare },
   { href: '/network', label: 'Network', icon: Network },
-  { href: '/profile/demo-user', label: 'Profile', icon: UserRound },
-];
+    { href: `/profile/${userId}`, label: 'Profile', icon: UserRound },
+  ];
+}
 
-export function Navbar() {
+interface NavbarProps {
+  user: Session['user'];
+}
+
+export function Navbar({ user }: NavbarProps) {
+  const navItems = getNavItems(user.id);
+
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
@@ -39,6 +49,11 @@ export function Navbar() {
           <Button variant="ghost" aria-label="Notifications" className="h-10 w-10 px-0">
             <Bell className="h-4 w-4" />
           </Button>
+          <form action={logoutAction}>
+            <Button variant="outline" aria-label="Sign out" className="h-10 w-10 px-0">
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </form>
         </div>
       </div>
     </header>

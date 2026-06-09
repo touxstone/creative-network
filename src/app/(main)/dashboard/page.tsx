@@ -7,6 +7,18 @@ import { moduleStatuses, stakeholderMetrics } from '@/lib/demo-data';
 
 export default async function DashboardPage() {
   const session = await getCurrentSession();
+  const user = session?.user;
+
+  if (!user) {
+    return null;
+  }
+
+  const initials = (user.name ?? user.email ?? 'CN')
+    .split(' ')
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_22rem]">
@@ -14,10 +26,10 @@ export default async function DashboardPage() {
         <div className="flex flex-col justify-between gap-4 rounded-lg border border-border bg-white p-6 sm:flex-row sm:items-end">
           <div>
             <p className="text-sm text-muted-foreground">Welcome back</p>
-            <h1 className="mt-2 text-3xl font-bold">{session.user.name}</h1>
+            <h1 className="mt-2 text-3xl font-bold">{user.name ?? user.email}</h1>
             <p className="mt-2 max-w-2xl text-muted-foreground">
-              Your workspace is ready for the CORE demo. The next slices add persistence,
-              social activity, and professional discovery.
+              Your CORE workspace now has persisted profiles and authentication. The next slices
+              add social activity and professional discovery.
             </p>
           </div>
           <Link href="/feed">
@@ -73,13 +85,16 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="grid h-24 w-24 place-items-center rounded-lg bg-foreground text-2xl font-bold text-white">
-              MS
+              {initials}
             </div>
-            <h2 className="mt-4 font-semibold">{session.user.profession}</h2>
-            <p className="text-sm text-muted-foreground">{session.user.location}</p>
-            <Link href="/profile/demo-user" className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-primary">
+            <h2 className="mt-4 font-semibold">{user.profession ?? 'Creative professional'}</h2>
+            <p className="text-sm text-muted-foreground">{user.location ?? 'Location pending'}</p>
+            <Link href={`/profile/${user.id}`} className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-primary">
               View public profile
               <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link href="/profile/edit" className="mt-3 block text-sm font-medium text-accent">
+              Edit profile
             </Link>
           </CardContent>
         </Card>
