@@ -26,9 +26,10 @@ const demoUsers = [
 
 async function main() {
   const password = await bcrypt.hash('DemoPassword123', 12);
+  const usersByEmail = new Map();
 
   for (const user of demoUsers) {
-    await prisma.user.upsert({
+    const savedUser = await prisma.user.upsert({
       where: { email: user.email },
       update: {
         username: user.username,
@@ -43,11 +44,101 @@ async function main() {
         password,
       },
     });
+
+    usersByEmail.set(savedUser.email, savedUser);
   }
+
+  const mara = usersByEmail.get('mara@creativenetwork.test');
+  const leah = usersByEmail.get('leah@creativenetwork.test');
+
+  const posts = [
+    {
+      id: 'demo-post-leah-contained-drama',
+      authorId: leah.id,
+      content:
+        'Looking for a producer with festival short experience for a contained drama proof of concept. The script is 12 pages, two locations, and designed for a tight weekend shoot.',
+    },
+    {
+      id: 'demo-post-mara-packaging',
+      authorId: mara.id,
+      content:
+        'Packaging a small slate of proof-of-concept shorts this month. Particularly interested in directors who can work with grounded genre and strong performance beats.',
+    },
+  ];
+
+  for (const post of posts) {
+    await prisma.post.upsert({
+      where: { id: post.id },
+      update: {
+        content: post.content,
+        authorId: post.authorId,
+      },
+      create: post,
+    });
+  }
+
+  await prisma.comment.upsert({
+    where: { id: 'demo-comment-mara-on-leah' },
+    update: {
+      content: 'Happy to look at the deck. Send the tone references when ready.',
+      postId: 'demo-post-leah-contained-drama',
+      authorId: mara.id,
+    },
+    create: {
+      id: 'demo-comment-mara-on-leah',
+      content: 'Happy to look at the deck. Send the tone references when ready.',
+      postId: 'demo-post-leah-contained-drama',
+      authorId: mara.id,
+    },
+  });
+
+  await prisma.comment.upsert({
+    where: { id: 'demo-comment-leah-on-mara' },
+    update: {
+      content: 'I know two directors who might fit this. I can introduce you.',
+      postId: 'demo-post-mara-packaging',
+      authorId: leah.id,
+    },
+    create: {
+      id: 'demo-comment-leah-on-mara',
+      content: 'I know two directors who might fit this. I can introduce you.',
+      postId: 'demo-post-mara-packaging',
+      authorId: leah.id,
+    },
+  });
+
+  await prisma.like.upsert({
+    where: {
+      postId_userId: {
+        postId: 'demo-post-leah-contained-drama',
+        userId: mara.id,
+      },
+    },
+    update: {},
+    create: {
+      postId: 'demo-post-leah-contained-drama',
+      userId: mara.id,
+    },
+  });
+
+  await prisma.like.upsert({
+    where: {
+      postId_userId: {
+        postId: 'demo-post-mara-packaging',
+        userId: leah.id,
+      },
+    },
+    update: {},
+    create: {
+      postId: 'demo-post-mara-packaging',
+      userId: leah.id,
+    },
+  });
 
   console.log('Seeded demo users:');
   console.log('mara@creativenetwork.test / DemoPassword123');
   console.log('leah@creativenetwork.test / DemoPassword123');
+  console.log('Seeded demo social feed posts, comments, and likes.');
 }
 
 main()
