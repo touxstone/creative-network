@@ -22,6 +22,24 @@ const demoUsers = [
     website: 'https://creativenetwork.test/leahmorgan',
     bio: 'Screenwriter building contained drama pilots and pitch decks for international development teams.',
   },
+  {
+    email: 'aisha@creativenetwork.test',
+    username: 'aishagrant',
+    name: 'Aisha Grant',
+    profession: 'Casting Director',
+    location: 'Los Angeles',
+    website: 'https://creativenetwork.test/aishagrant',
+    bio: 'Casting director focused on shortlists, talent discovery, and finding performers for international indie projects.',
+  },
+  {
+    email: 'nico@creativenetwork.test',
+    username: 'nicoreyes',
+    name: 'Nico Reyes',
+    profession: 'Composer',
+    location: 'Barcelona',
+    website: 'https://creativenetwork.test/nicoreyes',
+    bio: 'Composer creating suspense cues, trailer packs, and intimate scores for features and proof-of-concept shorts.',
+  },
 ];
 
 async function main() {
@@ -50,6 +68,8 @@ async function main() {
 
   const mara = usersByEmail.get('mara@creativenetwork.test');
   const leah = usersByEmail.get('leah@creativenetwork.test');
+  const aisha = usersByEmail.get('aisha@creativenetwork.test');
+  const nico = usersByEmail.get('nico@creativenetwork.test');
 
   const posts = [
     {
@@ -135,10 +155,64 @@ async function main() {
     },
   });
 
+  await prisma.connection.upsert({
+    where: {
+      userAId_userBId: {
+        userAId: mara.id,
+        userBId: leah.id,
+      },
+    },
+    update: {
+      status: 'ACCEPTED',
+    },
+    create: {
+      userAId: mara.id,
+      userBId: leah.id,
+      status: 'ACCEPTED',
+    },
+  });
+
+  await prisma.connection.upsert({
+    where: {
+      userAId_userBId: {
+        userAId: aisha.id,
+        userBId: mara.id,
+      },
+    },
+    update: {
+      status: 'PENDING',
+    },
+    create: {
+      userAId: aisha.id,
+      userBId: mara.id,
+      status: 'PENDING',
+    },
+  });
+
+  await prisma.connection.upsert({
+    where: {
+      userAId_userBId: {
+        userAId: leah.id,
+        userBId: nico.id,
+      },
+    },
+    update: {
+      status: 'PENDING',
+    },
+    create: {
+      userAId: leah.id,
+      userBId: nico.id,
+      status: 'PENDING',
+    },
+  });
+
   console.log('Seeded demo users:');
   console.log('mara@creativenetwork.test / DemoPassword123');
   console.log('leah@creativenetwork.test / DemoPassword123');
+  console.log('aisha@creativenetwork.test / DemoPassword123');
+  console.log('nico@creativenetwork.test / DemoPassword123');
   console.log('Seeded demo social feed posts, comments, and likes.');
+  console.log('Seeded demo network connections and requests.');
 }
 
 main()
