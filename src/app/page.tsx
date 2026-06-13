@@ -10,6 +10,7 @@ import {
   UserPlus,
   UsersRound,
 } from 'lucide-react';
+import { FEATURED_SPECIALTIES } from '@/core/shared/taxonomies/specialties';
 
 const previewPosts = [
   {
@@ -31,17 +32,6 @@ const networkHighlights = [
   'Profile-driven discovery',
 ];
 
-const specialties = [
-  'Actor',
-  'Screenwriter',
-  'Producer',
-  'Casting Director',
-  'Composer',
-  'Editor',
-  'Cinematographer',
-  'Production Designer',
-];
-
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-background">
@@ -54,17 +44,6 @@ export default function HomePage() {
           sizes="100vw"
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <video
-          className="absolute inset-0 hidden h-full w-full object-cover sm:block"
-          poster="/media/landing-poster.png"
-          autoPlay
-          muted
-          loop
-          playsInline
-          aria-hidden="true"
-        >
-          <source src="/media/landing-loop.mp4" type="video/mp4" />
-        </video>
         <div className="absolute inset-0 bg-black/60" />
         <div className="absolute inset-y-0 left-0 w-full bg-[linear-gradient(90deg,rgba(0,0,0,0.78),rgba(0,0,0,0.42),rgba(0,0,0,0.12))]" />
 
@@ -214,7 +193,7 @@ export default function HomePage() {
             <div>
               <h2 className="text-2xl font-bold">Specialties for the next polish slice</h2>
               <p className="mt-2 max-w-2xl text-muted-foreground">
-                We will turn profile specialty into guided tags while still allowing custom roles.
+                Profile specialty now has guided suggestions while still allowing custom roles.
               </p>
             </div>
             <Link
@@ -226,7 +205,7 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="mt-6 flex flex-wrap gap-2">
-            {specialties.map((specialty) => (
+            {FEATURED_SPECIALTIES.map((specialty) => (
               <span key={specialty} className="rounded-md border border-border bg-muted px-3 py-2 text-sm">
                 {specialty}
               </span>

@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { Save } from 'lucide-react';
 import { updateProfileAction } from '@/core/auth/actions';
 import { auth } from '@/core/auth/auth';
+import { SPECIALTY_OPTIONS } from '@/core/shared/taxonomies/specialties';
 import { prisma } from '@/lib/db/prisma';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -54,7 +55,12 @@ export default async function EditProfilePage({ searchParams }: EditProfilePageP
             </div>
             <div className="space-y-2">
               <Label htmlFor="profession">Profession</Label>
-              <Input id="profession" name="profession" defaultValue={user.profession ?? ''} />
+              <Input
+                id="profession"
+                name="profession"
+                list="specialty-options"
+                defaultValue={user.profession ?? ''}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
@@ -77,6 +83,11 @@ export default async function EditProfilePage({ searchParams }: EditProfilePageP
               <Save className="h-4 w-4" />
               Save profile
             </Button>
+            <datalist id="specialty-options">
+              {SPECIALTY_OPTIONS.map((specialty) => (
+                <option key={specialty} value={specialty} />
+              ))}
+            </datalist>
           </form>
         </CardContent>
       </Card>

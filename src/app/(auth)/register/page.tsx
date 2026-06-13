@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { UserPlus } from 'lucide-react';
 import { registerAction } from '@/core/auth/actions';
+import { SPECIALTY_OPTIONS } from '@/core/shared/taxonomies/specialties';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -36,7 +37,7 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
             </div>
             <div className="space-y-2">
               <Label htmlFor="profession">Profession</Label>
-              <Input id="profession" name="profession" placeholder="Producer" />
+              <Input id="profession" name="profession" list="specialty-options" placeholder="Producer" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
@@ -59,6 +60,11 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
               <UserPlus className="h-4 w-4" />
               Create profile
             </Button>
+            <datalist id="specialty-options">
+              {SPECIALTY_OPTIONS.map((specialty) => (
+                <option key={specialty} value={specialty} />
+              ))}
+            </datalist>
           </form>
           <p className="mt-5 text-center text-sm text-muted-foreground">
             Already registered?{' '}
