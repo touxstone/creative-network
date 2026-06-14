@@ -1,6 +1,7 @@
 # Landing Media
 
-`landing-poster.png` is an AI-generated fallback poster created for this project.
+`landing-poster.png` is an AI-generated fallback poster created for this project. See
+`ASSET_CREDITS.md` for the project-level credit log.
 
 Optional video support:
 

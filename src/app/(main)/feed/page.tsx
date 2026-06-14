@@ -166,8 +166,13 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
           posts.map((post) => <PostCard key={post.id} post={post} viewerId={viewerId} />)
         ) : (
           <Card>
-            <CardContent className="p-8 text-center text-muted-foreground">
-              No posts yet. Publish the first Lounge update for this demo space.
+            <CardContent className="p-8 text-center">
+              <MessageSquare className="mx-auto h-8 w-8 text-accent" />
+              <h2 className="mt-4 font-semibold">No Lounge posts yet</h2>
+              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+                Publish an opportunity, collaboration request, or production update to start the
+                conversation.
+              </p>
             </CardContent>
           </Card>
         )}

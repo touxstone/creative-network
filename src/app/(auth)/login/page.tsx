@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { LogIn } from 'lucide-react';
+import { KeyRound, LogIn } from 'lucide-react';
 import { loginAction } from '@/core/auth/actions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -44,6 +44,16 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               Continue to workspace
             </Button>
           </form>
+          <div className="mt-5 rounded-md border border-border bg-muted p-3 text-sm">
+            <div className="flex items-center gap-2 font-medium">
+              <KeyRound className="h-4 w-4 text-accent" />
+              Demo access
+            </div>
+            <p className="mt-2 text-muted-foreground">
+              Use <span className="font-medium text-foreground">mara@creativenetwork.test</span>{' '}
+              with the shared demo password from the project notes.
+            </p>
+          </div>
           <p className="mt-5 text-center text-sm text-muted-foreground">
             New here?{' '}
             <Link className="font-medium text-primary" href="/register">

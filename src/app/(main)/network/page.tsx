@@ -178,8 +178,11 @@ export default async function NetworkPage() {
           </div>
         ) : (
           <Card>
-            <CardContent className="p-6 text-sm text-muted-foreground">
-              No accepted connections yet. Start with the suggestions below.
+            <CardContent className="p-6">
+              <h3 className="font-semibold">No accepted connections yet</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Start with a suggested professional or accept a pending request when one appears.
+              </p>
             </CardContent>
           </Card>
         )}
@@ -220,8 +223,11 @@ export default async function NetworkPage() {
           </div>
         ) : (
           <Card>
-            <CardContent className="p-6 text-sm text-muted-foreground">
-              No suggestions right now. New demo users or profile data will expand this list.
+            <CardContent className="p-6">
+              <h3 className="font-semibold">No suggestions right now</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                New profiles and richer specialty data will expand this list as the network grows.
+              </p>
             </CardContent>
           </Card>
         )}
