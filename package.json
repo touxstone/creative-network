@@ -3,19 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=20.9.0",
+    "node": ">=20.9.0 <24",
     "npm": ">=10"
   },
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma generate --schema=prisma/schema.prisma && next build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push",
+    "db:generate": "prisma generate --schema=prisma/schema.prisma",
+    "db:push": "prisma db push --schema=prisma/schema.prisma",
     "db:seed": "node prisma/seed.mjs",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio --schema=prisma/schema.prisma"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",

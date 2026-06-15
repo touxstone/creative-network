@@ -206,6 +206,47 @@ async function main() {
     },
   });
 
+  await prisma.conversation.upsert({
+    where: { id: 'demo-conversation-mara-leah' },
+    update: {},
+    create: {
+      id: 'demo-conversation-mara-leah',
+      participants: {
+        create: [{ userId: mara.id }, { userId: leah.id }],
+      },
+    },
+  });
+
+  await prisma.message.upsert({
+    where: { id: 'demo-message-leah-to-mara' },
+    update: {
+      content: 'I tightened the proof-of-concept logline. Would love your producer eye on it.',
+      conversationId: 'demo-conversation-mara-leah',
+      senderId: leah.id,
+    },
+    create: {
+      id: 'demo-message-leah-to-mara',
+      content: 'I tightened the proof-of-concept logline. Would love your producer eye on it.',
+      conversationId: 'demo-conversation-mara-leah',
+      senderId: leah.id,
+    },
+  });
+
+  await prisma.message.upsert({
+    where: { id: 'demo-message-mara-to-leah' },
+    update: {
+      content: 'Send it over. I can also suggest two comparable shorts for the pitch notes.',
+      conversationId: 'demo-conversation-mara-leah',
+      senderId: mara.id,
+    },
+    create: {
+      id: 'demo-message-mara-to-leah',
+      content: 'Send it over. I can also suggest two comparable shorts for the pitch notes.',
+      conversationId: 'demo-conversation-mara-leah',
+      senderId: mara.id,
+    },
+  });
+
   console.log('Seeded demo users:');
   console.log('mara@creativenetwork.test / DemoPassword123');
   console.log('leah@creativenetwork.test / DemoPassword123');
@@ -213,6 +254,7 @@ async function main() {
   console.log('nico@creativenetwork.test / DemoPassword123');
   console.log('Seeded demo social feed posts, comments, and likes.');
   console.log('Seeded demo network connections and requests.');
+  console.log('Seeded demo messaging conversation and messages.');
 }
 
 main()

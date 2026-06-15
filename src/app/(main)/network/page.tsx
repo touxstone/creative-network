@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { Check, Clock, MapPin, Search, UserPlus, UsersRound, X } from 'lucide-react';
+import { Check, Clock, MapPin, MessageSquare, Search, UserPlus, UsersRound, X } from 'lucide-react';
 import { auth } from '@/core/auth/auth';
 import {
   respondConnectionRequestAction,
   sendConnectionRequestAction,
 } from '@/features/networking/actions';
+import { startConversationAction } from '@/features/messaging/actions';
 import { getNetworkOverview } from '@/features/networking/queries';
 import type { ConnectionWithUsers, NetworkUser } from '@/features/networking/types';
 import { Button } from '@/components/ui/button';
@@ -171,6 +172,13 @@ export default async function NetworkPage() {
                 <Card key={connection.id}>
                   <CardContent className="p-5">
                     <UserSummary user={user} />
+                    <form action={startConversationAction}>
+                      <input type="hidden" name="recipientId" value={user.id} />
+                      <Button className="mt-5 w-full" variant="outline">
+                        <MessageSquare className="h-4 w-4" />
+                        Message
+                      </Button>
+                    </form>
                   </CardContent>
                 </Card>
               );

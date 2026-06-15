@@ -1,14 +1,24 @@
 import Link from 'next/link';
-import { Bell, BriefcaseBusiness, LogOut, MessageSquare, Network, Search, UserRound } from 'lucide-react';
+import {
+  Bell,
+  BriefcaseBusiness,
+  LogOut,
+  MessagesSquare,
+  MessageSquare,
+  Network,
+  Search,
+  UserRound,
+} from 'lucide-react';
 import type { Session } from 'next-auth';
 import { logoutAction } from '@/core/auth/actions';
 import { Button } from '@/components/ui/button';
 
 function getNavItems(userId: string) {
   return [
-  { href: '/dashboard', label: 'Dashboard', icon: BriefcaseBusiness },
-  { href: '/feed', label: 'Lounge', icon: MessageSquare },
-  { href: '/network', label: 'Network', icon: Network },
+    { href: '/dashboard', label: 'Dashboard', icon: BriefcaseBusiness },
+    { href: '/feed', label: 'Lounge', icon: MessageSquare },
+    { href: '/network', label: 'Network', icon: Network },
+    { href: '/messages', label: 'Messages', icon: MessagesSquare },
     { href: `/profile/${userId}`, label: 'Profile', icon: UserRound },
   ];
 }

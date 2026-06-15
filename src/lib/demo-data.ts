@@ -39,8 +39,28 @@ export const featuredPeople = [
 ];
 
 export const moduleStatuses: ModuleStatus[] = [
-  { key: 'core', name: 'CORE', status: 'showable', description: 'Navigation, profiles, dashboard shell, design language.' },
-  { key: 'social-feed', name: 'SOCIAL_FEED', status: 'next', description: 'Posts, comments, likes, and a lounge timeline.' },
-  { key: 'networking', name: 'NETWORKING', status: 'planned', description: 'Connections, requests, suggestions, and search.' },
-  { key: 'messaging', name: 'MESSAGING', status: 'planned', description: 'Private conversations and real-time presence.' },
+  {
+    key: 'core',
+    name: 'CORE',
+    status: 'showable',
+    description: 'Authentication, profiles, dashboard, navigation, and design language.',
+  },
+  {
+    key: 'social-feed',
+    name: 'SOCIAL_FEED',
+    status: 'showable',
+    description: 'Posts, comments, likes, and a lounge timeline.',
+  },
+  {
+    key: 'networking',
+    name: 'NETWORKING',
+    status: 'showable',
+    description: 'Connections, requests, suggestions, and professional discovery.',
+  },
+  {
+    key: 'messaging',
+    name: 'MESSAGING',
+    status: 'showable',
+    description: 'Private persisted conversations between accepted contacts.',
+  },
 ];
