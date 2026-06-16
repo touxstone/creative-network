@@ -37,6 +37,7 @@ function ConversationCard({
 }) {
   const otherUser = getOtherParticipant(conversation, viewerId);
   const latestMessage = conversation.messages[0];
+  const title = conversation.title ?? otherUser?.name ?? otherUser?.username ?? 'Conversation';
 
   if (!otherUser) {
     return null;
@@ -51,7 +52,7 @@ function ConversationCard({
         <UserAvatar user={otherUser} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="font-semibold">{otherUser.name ?? otherUser.username}</h2>
+            <h2 className="font-semibold">{title}</h2>
             <span className="text-xs text-muted-foreground">
               {conversation.updatedAt.toLocaleDateString('en', {
                 month: 'short',
@@ -64,7 +65,9 @@ function ConversationCard({
           </p>
           <p className="mt-4 line-clamp-2 text-sm leading-6 text-muted-foreground">
             {latestMessage
-              ? `${latestMessage.senderId === viewerId ? 'You: ' : ''}${latestMessage.content}`
+              ? `${latestMessage.senderId === viewerId ? 'You: ' : ''}${latestMessage.content}${
+                  latestMessage.editedAt ? ' (edited)' : ''
+                }`
               : 'Conversation ready. Send the first message.'}
           </p>
         </div>

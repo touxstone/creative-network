@@ -94,6 +94,36 @@ export async function getConversationThread(
         },
         orderBy: { createdAt: 'asc' },
       },
+      pinnedMessage: {
+        include: {
+          sender: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+            },
+          },
+          replyTo: {
+            include: {
+              sender: {
+                select: {
+                  id: true,
+                  name: true,
+                  username: true,
+                },
+              },
+            },
+          },
+          editHistory: {
+            select: {
+              id: true,
+              createdAt: true,
+              reason: true,
+            },
+            orderBy: { createdAt: 'desc' },
+          },
+        },
+      },
       messages: {
         include: {
           sender: {
@@ -102,6 +132,25 @@ export async function getConversationThread(
               name: true,
               username: true,
             },
+          },
+          replyTo: {
+            include: {
+              sender: {
+                select: {
+                  id: true,
+                  name: true,
+                  username: true,
+                },
+              },
+            },
+          },
+          editHistory: {
+            select: {
+              id: true,
+              createdAt: true,
+              reason: true,
+            },
+            orderBy: { createdAt: 'desc' },
           },
         },
         orderBy: { createdAt: 'asc' },

@@ -208,9 +208,12 @@ async function main() {
 
   await prisma.conversation.upsert({
     where: { id: 'demo-conversation-mara-leah' },
-    update: {},
+    update: {
+      title: 'Contained drama proof-of-concept notes',
+    },
     create: {
       id: 'demo-conversation-mara-leah',
+      title: 'Contained drama proof-of-concept notes',
       participants: {
         create: [{ userId: mara.id }, { userId: leah.id }],
       },
@@ -238,12 +241,21 @@ async function main() {
       content: 'Send it over. I can also suggest two comparable shorts for the pitch notes.',
       conversationId: 'demo-conversation-mara-leah',
       senderId: mara.id,
+      replyToId: 'demo-message-leah-to-mara',
     },
     create: {
       id: 'demo-message-mara-to-leah',
       content: 'Send it over. I can also suggest two comparable shorts for the pitch notes.',
       conversationId: 'demo-conversation-mara-leah',
       senderId: mara.id,
+      replyToId: 'demo-message-leah-to-mara',
+    },
+  });
+
+  await prisma.conversation.update({
+    where: { id: 'demo-conversation-mara-leah' },
+    data: {
+      pinnedMessageId: 'demo-message-leah-to-mara',
     },
   });
 

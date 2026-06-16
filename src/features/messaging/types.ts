@@ -8,6 +8,7 @@ export interface MessagingUser {
 
 export interface ConversationPreview {
   id: string;
+  title: string | null;
   updatedAt: Date;
   participants: Array<{
     user: MessagingUser;
@@ -18,21 +19,41 @@ export interface ConversationPreview {
     createdAt: Date;
     senderId: string;
     sender: Pick<MessagingUser, 'id' | 'name' | 'username'>;
+    editedAt: Date | null;
+    editCount: number;
+  }>;
+}
+
+export interface ThreadMessage {
+  id: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  editedAt: Date | null;
+  editCount: number;
+  senderId: string;
+  sender: Pick<MessagingUser, 'id' | 'name' | 'username'>;
+  replyTo: {
+    id: string;
+    content: string;
+    sender: Pick<MessagingUser, 'id' | 'name' | 'username'>;
+  } | null;
+  editHistory: Array<{
+    id: string;
+    createdAt: Date;
+    reason: string | null;
   }>;
 }
 
 export interface MessageThread {
   id: string;
+  title: string | null;
+  pinnedMessageId: string | null;
+  pinnedMessage: ThreadMessage | null;
   participants: Array<{
     user: MessagingUser;
   }>;
-  messages: Array<{
-    id: string;
-    content: string;
-    createdAt: Date;
-    senderId: string;
-    sender: Pick<MessagingUser, 'id' | 'name' | 'username'>;
-  }>;
+  messages: ThreadMessage[];
 }
 
 export interface MessagingOverview {

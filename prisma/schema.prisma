@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
@@ -23,16 +23,17 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
-  posts         Post[]
-  likes         Like[]
-  comments      Comment[]
+  accounts                 Account[]
+  sessions                 Session[]
+  posts                    Post[]
+  likes                    Like[]
+  comments                 Comment[]
   conversationParticipants ConversationParticipant[]
-  sentMessages  Message[]
+  sentMessages             Message[]
+  messageEdits             MessageEditHistory[]
 
-  connectionsInitiated Connection[] @relation("ConnectionsInitiated")
-  connectionsReceived  Connection[] @relation("ConnectionsReceived")
+  connectionsInitiated Connection[]  @relation("ConnectionsInitiated")
+  connectionsReceived  Connection[]  @relation("ConnectionsReceived")
   blockedBy            BlockedUser[] @relation("BlockedBy")
   blocks               BlockedUser[] @relation("Blocks")
 
@@ -155,12 +156,16 @@ model BlockedUser {
 }
 
 model Conversation {
-  id           String                    @id @default(cuid())
-  participants ConversationParticipant[]
-  messages     Message[]
-  createdAt    DateTime                  @default(now())
-  updatedAt    DateTime                  @updatedAt
+  id              String                    @id @default(cuid())
+  title           String?
+  pinnedMessageId String?
+  pinnedMessage   Message?                  @relation("PinnedMessage", fields: [pinnedMessageId], references: [id], onDelete: SetNull)
+  participants    ConversationParticipant[]
+  messages        Message[]
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
 
+  @@index([pinnedMessageId])
   @@index([updatedAt])
   @@map("conversations")
 }
@@ -180,16 +185,40 @@ model ConversationParticipant {
 }
 
 model Message {
-  id             String       @id @default(cuid())
+  id             String               @id @default(cuid())
   conversationId String
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversation   Conversation         @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   senderId       String
-  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  content        String       @db.Text
-  createdAt      DateTime     @default(now())
+  sender         User                 @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  content        String               @db.Text
+  replyToId      String?
+  replyTo        Message?             @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies        Message[]            @relation("MessageReplies")
+  pinnedIn       Conversation[]       @relation("PinnedMessage")
+  editedAt       DateTime?
+  editCount      Int                  @default(0)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @default(now()) @updatedAt
+  editHistory    MessageEditHistory[]
 
   @@index([conversationId])
   @@index([senderId])
+  @@index([replyToId])
   @@index([createdAt])
   @@map("messages")
+}
+
+model MessageEditHistory {
+  id              String   @id @default(cuid())
+  messageId       String
+  message         Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  editorId        String
+  editor          User     @relation(fields: [editorId], references: [id], onDelete: Cascade)
+  previousContent String   @db.Text
+  reason          String?
+  createdAt       DateTime @default(now())
+
+  @@index([messageId])
+  @@index([editorId])
+  @@map("message_edit_history")
 }
