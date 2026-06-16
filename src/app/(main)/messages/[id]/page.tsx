@@ -45,6 +45,7 @@ function MessageBubble({
   isPinned: boolean;
 }) {
   const isOwnMessage = message.senderId === viewerId;
+  const messageActionButtonClass = 'h-8 border-border bg-white text-foreground hover:bg-muted';
 
   return (
     <div className={cn('flex', isOwnMessage ? 'justify-end' : 'justify-start')}>
@@ -108,7 +109,7 @@ function MessageBubble({
                 required
                 maxLength={2000}
               />
-              <Button variant="outline" className="h-8">
+              <Button variant="outline" className={messageActionButtonClass}>
                 <Send className="h-3.5 w-3.5" />
                 Send reply
               </Button>
@@ -118,7 +119,7 @@ function MessageBubble({
           <form action={pinMessageAction}>
             <input type="hidden" name="conversationId" value={conversationId} />
             <input type="hidden" name="messageId" value={message.id} />
-            <Button variant="outline" className="h-8">
+            <Button variant="outline" className={messageActionButtonClass}>
               <Pin className="h-3.5 w-3.5" />
               {isPinned ? 'Pinned' : 'Pin'}
             </Button>
@@ -150,7 +151,7 @@ function MessageBubble({
                   className="text-foreground"
                   maxLength={160}
                 />
-                <Button variant="outline" className="h-8">
+                <Button variant="outline" className={messageActionButtonClass}>
                   <Edit3 className="h-3.5 w-3.5" />
                   Save edit
                 </Button>
