@@ -371,6 +371,183 @@ async function main() {
     },
   });
 
+  await prisma.project.upsert({
+    where: { slug: 'la-casa-del-ultimo-verano' },
+    update: {
+      title: 'La casa del último verano',
+      logline:
+        'Una miniserie dramática sobre tres hermanas que vuelven al pueblo familiar para decidir qué hacer con una casa cargada de memoria.',
+      description:
+        'Proyecto en fase de desarrollo para explorar reparto, tono visual y primeras lecturas de guion. Creative Network funciona aquí como punto de encuentro para notas de producción, referencias externas y búsqueda de perfiles creativos hispanohablantes.',
+      status: 'DEVELOPMENT',
+      language: 'Español',
+      location: 'Madrid / Remoto',
+      ownerRole: 'Guionista',
+      ownerId: leah.id,
+      members: {
+        deleteMany: {},
+        create: [
+          { userId: leah.id, role: 'Guionista' },
+          { userId: mara.id, role: 'Productora' },
+        ],
+      },
+      links: {
+        deleteMany: {},
+        create: [
+          {
+            label: 'Biblia de serie mock',
+            url: 'https://example.com/la-casa-del-ultimo-verano',
+          },
+        ],
+      },
+    },
+    create: {
+      title: 'La casa del último verano',
+      slug: 'la-casa-del-ultimo-verano',
+      logline:
+        'Una miniserie dramática sobre tres hermanas que vuelven al pueblo familiar para decidir qué hacer con una casa cargada de memoria.',
+      description:
+        'Proyecto en fase de desarrollo para explorar reparto, tono visual y primeras lecturas de guion. Creative Network funciona aquí como punto de encuentro para notas de producción, referencias externas y búsqueda de perfiles creativos hispanohablantes.',
+      status: 'DEVELOPMENT',
+      language: 'Español',
+      location: 'Madrid / Remoto',
+      ownerRole: 'Guionista',
+      ownerId: leah.id,
+      members: {
+        create: [
+          { userId: leah.id, role: 'Guionista' },
+          { userId: mara.id, role: 'Productora' },
+        ],
+      },
+      links: {
+        create: [
+          {
+            label: 'Biblia de serie mock',
+            url: 'https://example.com/la-casa-del-ultimo-verano',
+          },
+        ],
+      },
+    },
+  });
+
+  await prisma.project.upsert({
+    where: { slug: 'llum-de-fabrica' },
+    update: {
+      title: 'Llum de fàbrica',
+      logline:
+        'Un curt en català sobre una antiga nau industrial reconvertida en espai de creació i les tensions entre memòria, barri i futur.',
+      description:
+        'Peça curta pensada per provar llenguatge visual, música original i una petita comunitat de col·laboradors locals. El projecte utilitza enllaços externs per compartir moodboards, dossiers i referències sense pujar arxius a la plataforma.',
+      status: 'SEEKING_COLLABORATORS',
+      language: 'Català',
+      location: 'Barcelona / Terrassa',
+      ownerRole: 'Compositor',
+      ownerId: nico.id,
+      members: {
+        deleteMany: {},
+        create: [
+          { userId: nico.id, role: 'Compositor' },
+          { userId: mara.id, role: 'Producció' },
+        ],
+      },
+      links: {
+        deleteMany: {},
+        create: [
+          {
+            label: 'Dossier visual mock',
+            url: 'https://example.com/llum-de-fabrica',
+          },
+        ],
+      },
+    },
+    create: {
+      title: 'Llum de fàbrica',
+      slug: 'llum-de-fabrica',
+      logline:
+        'Un curt en català sobre una antiga nau industrial reconvertida en espai de creació i les tensions entre memòria, barri i futur.',
+      description:
+        'Peça curta pensada per provar llenguatge visual, música original i una petita comunitat de col·laboradors locals. El projecte utilitza enllaços externs per compartir moodboards, dossiers i referències sense pujar arxius a la plataforma.',
+      status: 'SEEKING_COLLABORATORS',
+      language: 'Català',
+      location: 'Barcelona / Terrassa',
+      ownerRole: 'Compositor',
+      ownerId: nico.id,
+      members: {
+        create: [
+          { userId: nico.id, role: 'Compositor' },
+          { userId: mara.id, role: 'Producció' },
+        ],
+      },
+      links: {
+        create: [
+          {
+            label: 'Dossier visual mock',
+            url: 'https://example.com/llum-de-fabrica',
+          },
+        ],
+      },
+    },
+  });
+
+  await prisma.project.upsert({
+    where: { slug: 'itsasargiaren-itzala' },
+    update: {
+      title: 'Itsasargiaren itzala',
+      logline:
+        'Euskarazko drama labur bat, kostaldeko herri batean desagertutako arrantzale baten oroitzapenak eta belaunaldi berrien isiltasunak gurutzatzen dituena.',
+      description:
+        'Garapen hasierako proiektua, idazketa-talde txiki batek urrunetik lantzeko pentsatua. Creative Networkek elkarrizketak, kanpoko erreferentziak eta lankidetza-seinaleak lotzen ditu, fitxategiak derrigorrez barruan gorde gabe.',
+      status: 'DEVELOPMENT',
+      language: 'Euskera',
+      location: 'Donostia / Online',
+      ownerRole: 'Casting director',
+      ownerId: aisha.id,
+      members: {
+        deleteMany: {},
+        create: [
+          { userId: aisha.id, role: 'Casting' },
+          { userId: leah.id, role: 'Script notes' },
+        ],
+      },
+      links: {
+        deleteMany: {},
+        create: [
+          {
+            label: 'Erreferentzia mock',
+            url: 'https://example.com/itsasargiaren-itzala',
+          },
+        ],
+      },
+    },
+    create: {
+      title: 'Itsasargiaren itzala',
+      slug: 'itsasargiaren-itzala',
+      logline:
+        'Euskarazko drama labur bat, kostaldeko herri batean desagertutako arrantzale baten oroitzapenak eta belaunaldi berrien isiltasunak gurutzatzen dituena.',
+      description:
+        'Garapen hasierako proiektua, idazketa-talde txiki batek urrunetik lantzeko pentsatua. Creative Networkek elkarrizketak, kanpoko erreferentziak eta lankidetza-seinaleak lotzen ditu, fitxategiak derrigorrez barruan gorde gabe.',
+      status: 'DEVELOPMENT',
+      language: 'Euskera',
+      location: 'Donostia / Online',
+      ownerRole: 'Casting director',
+      ownerId: aisha.id,
+      members: {
+        create: [
+          { userId: aisha.id, role: 'Casting' },
+          { userId: leah.id, role: 'Script notes' },
+        ],
+      },
+      links: {
+        create: [
+          {
+            label: 'Erreferentzia mock',
+            url: 'https://example.com/itsasargiaren-itzala',
+          },
+        ],
+      },
+    },
+  });
+
   console.log('Seeded demo users:');
   console.log('mara@creativenetwork.test / DemoPassword123');
   console.log('leah@creativenetwork.test / DemoPassword123');
