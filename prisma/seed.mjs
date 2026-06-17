@@ -259,6 +259,118 @@ async function main() {
     },
   });
 
+  await prisma.project.upsert({
+    where: { slug: 'contained-drama-proof-of-concept' },
+    update: {
+      title: 'Contained Drama Proof of Concept',
+      logline:
+        'A contained short designed to test tone, performance, and festival viability before packaging a larger limited series.',
+      description:
+        'A 12-page two-location drama proof of concept built for a focused weekend shoot. The project is using Creative Network to gather producer notes, director references, and collaborators before moving toward a lightweight pitch package.',
+      status: 'DEVELOPMENT',
+      language: 'English',
+      location: 'London / Madrid',
+      ownerRole: 'Producer',
+      ownerId: mara.id,
+      members: {
+        deleteMany: {},
+        create: [
+          { userId: mara.id, role: 'Producer' },
+          { userId: leah.id, role: 'Writer' },
+        ],
+      },
+      links: {
+        deleteMany: {},
+        create: [
+          {
+            label: 'Pitch deck placeholder',
+            url: 'https://example.com/contained-drama-deck',
+          },
+        ],
+      },
+    },
+    create: {
+      title: 'Contained Drama Proof of Concept',
+      slug: 'contained-drama-proof-of-concept',
+      logline:
+        'A contained short designed to test tone, performance, and festival viability before packaging a larger limited series.',
+      description:
+        'A 12-page two-location drama proof of concept built for a focused weekend shoot. The project is using Creative Network to gather producer notes, director references, and collaborators before moving toward a lightweight pitch package.',
+      status: 'DEVELOPMENT',
+      language: 'English',
+      location: 'London / Madrid',
+      ownerRole: 'Producer',
+      ownerId: mara.id,
+      members: {
+        create: [
+          { userId: mara.id, role: 'Producer' },
+          { userId: leah.id, role: 'Writer' },
+        ],
+      },
+      links: {
+        create: [
+          {
+            label: 'Pitch deck placeholder',
+            url: 'https://example.com/contained-drama-deck',
+          },
+        ],
+      },
+    },
+  });
+
+  await prisma.project.upsert({
+    where: { slug: 'nocturne-trailer-cues' },
+    update: {
+      title: 'Nocturne Trailer Cues',
+      logline:
+        'A compact cue pack for grounded genre shorts, proof-of-concepts, and teaser edits.',
+      description:
+        'A portfolio-facing cue collection built around suspense, restraint, and intimate character beats. The project links out to external audio references rather than storing media directly in Creative Network.',
+      status: 'SEEKING_COLLABORATORS',
+      language: 'Instrumental',
+      location: 'Barcelona / Remote',
+      ownerRole: 'Composer',
+      ownerId: nico.id,
+      members: {
+        deleteMany: {},
+        create: [{ userId: nico.id, role: 'Composer' }],
+      },
+      links: {
+        deleteMany: {},
+        create: [
+          {
+            label: 'Cue reel placeholder',
+            url: 'https://example.com/nocturne-cues',
+          },
+        ],
+      },
+    },
+    create: {
+      title: 'Nocturne Trailer Cues',
+      slug: 'nocturne-trailer-cues',
+      logline:
+        'A compact cue pack for grounded genre shorts, proof-of-concepts, and teaser edits.',
+      description:
+        'A portfolio-facing cue collection built around suspense, restraint, and intimate character beats. The project links out to external audio references rather than storing media directly in Creative Network.',
+      status: 'SEEKING_COLLABORATORS',
+      language: 'Instrumental',
+      location: 'Barcelona / Remote',
+      ownerRole: 'Composer',
+      ownerId: nico.id,
+      members: {
+        create: [{ userId: nico.id, role: 'Composer' }],
+      },
+      links: {
+        create: [
+          {
+            label: 'Cue reel placeholder',
+            url: 'https://example.com/nocturne-cues',
+          },
+        ],
+      },
+    },
+  });
+
   console.log('Seeded demo users:');
   console.log('mara@creativenetwork.test / DemoPassword123');
   console.log('leah@creativenetwork.test / DemoPassword123');
@@ -267,6 +379,7 @@ async function main() {
   console.log('Seeded demo social feed posts, comments, and likes.');
   console.log('Seeded demo network connections and requests.');
   console.log('Seeded demo messaging conversation and messages.');
+  console.log('Seeded demo projects and portfolio links.');
 }
 
 main()

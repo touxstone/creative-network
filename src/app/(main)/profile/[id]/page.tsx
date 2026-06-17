@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { BriefcaseBusiness, Edit, Globe, MapPin, MessageCircle } from 'lucide-react';
+import { BriefcaseBusiness, Edit, FolderKanban, Globe, MapPin, MessageCircle } from 'lucide-react';
+import { ProjectCard } from '@/components/projects/project-card';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { auth } from '@/core/auth/auth';
+import { getProjectsForUser } from '@/features/projects/queries';
 import { prisma } from '@/lib/db/prisma';
 
 interface ProfilePageProps {
@@ -32,6 +34,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   if (!user) {
     notFound();
   }
+
+  const projects = await getProjectsForUser(user.id);
 
   const initials = (user.name ?? user.username)
     .split(' ')
@@ -94,14 +98,26 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Current priorities</CardTitle>
+            <CardTitle>Projects</CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-3 md:grid-cols-3">
-            {['Find directors', 'Package pilots', 'Meet composers'].map((item) => (
-              <div key={item} className="rounded-md border border-border p-4 text-sm">
-                {item}
+          <CardContent>
+            {projects.length > 0 ? (
+              <div className="grid gap-4">
+                {projects.map((project) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
               </div>
-            ))}
+            ) : (
+              <div className="flex items-start gap-3 rounded-md border border-border p-4">
+                <FolderKanban className="mt-1 h-4 w-4 text-accent" />
+                <div>
+                  <h2 className="font-semibold">No visible projects yet</h2>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    Projects will turn this profile into a working portfolio and collaboration signal.
+                  </p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </section>

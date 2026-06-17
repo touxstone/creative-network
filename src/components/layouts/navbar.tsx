@@ -19,6 +19,7 @@ function getNavItems(userId: string) {
     { href: '/feed', label: 'Lounge', icon: MessageSquare },
     { href: '/network', label: 'Network', icon: Network },
     { href: '/messages', label: 'Messages', icon: MessagesSquare },
+    { href: '/projects', label: 'Projects', icon: BriefcaseBusiness },
     { href: `/profile/${userId}`, label: 'Profile', icon: UserRound },
   ];
 }

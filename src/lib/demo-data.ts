@@ -63,4 +63,10 @@ export const moduleStatuses: ModuleStatus[] = [
     status: 'showable',
     description: 'Private persisted conversations between accepted contacts.',
   },
+  {
+    key: 'projects',
+    name: 'PROJECTS',
+    status: 'showable',
+    description: 'Portfolio projects, external resources, and collaboration signals.',
+  },
 ];

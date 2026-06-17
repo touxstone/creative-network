@@ -31,6 +31,8 @@ model User {
   conversationParticipants ConversationParticipant[]
   sentMessages             Message[]
   messageEdits             MessageEditHistory[]
+  ownedProjects            Project[]                 @relation("ProjectOwner")
+  projectMemberships       ProjectMember[]
 
   connectionsInitiated Connection[]  @relation("ConnectionsInitiated")
   connectionsReceived  Connection[]  @relation("ConnectionsReceived")
@@ -221,4 +223,53 @@ model MessageEditHistory {
   @@index([messageId])
   @@index([editorId])
   @@map("message_edit_history")
+}
+
+model Project {
+  id          String          @id @default(cuid())
+  title       String
+  slug        String          @unique
+  logline     String?
+  description String          @db.Text
+  status      String          @default("DEVELOPMENT")
+  language    String?
+  location    String?
+  ownerRole   String?
+  ownerId     String
+  owner       User            @relation("ProjectOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members     ProjectMember[]
+  links       ProjectLink[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @default(now()) @updatedAt
+
+  @@index([ownerId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("projects")
+}
+
+model ProjectMember {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String
+  createdAt DateTime @default(now())
+
+  @@unique([projectId, userId])
+  @@index([userId])
+  @@map("project_members")
+}
+
+model ProjectLink {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  label     String
+  url       String
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+  @@map("project_links")
 }
