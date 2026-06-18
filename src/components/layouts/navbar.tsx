@@ -3,6 +3,7 @@ import {
   Bell,
   BriefcaseBusiness,
   LogOut,
+  Megaphone,
   MessagesSquare,
   MessageSquare,
   Network,
@@ -20,6 +21,7 @@ function getNavItems(userId: string) {
     { href: '/network', label: 'Network', icon: Network },
     { href: '/messages', label: 'Messages', icon: MessagesSquare },
     { href: '/projects', label: 'Projects', icon: BriefcaseBusiness },
+    { href: '/calls', label: 'Calls', icon: Megaphone },
     { href: `/profile/${userId}`, label: 'Profile', icon: UserRound },
   ];
 }

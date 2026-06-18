@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Edit, ExternalLink, Globe2, MapPin, Trash2, UsersRound } from 'lucide-react';
+import { Edit, ExternalLink, Globe2, MapPin, Megaphone, Trash2, UsersRound } from 'lucide-react';
 import { deleteProjectAction } from '@/features/projects/actions';
 import { getProjectBySlug } from '@/features/projects/queries';
 import { projectStatusLabels } from '@/features/projects/constants';
@@ -50,6 +50,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                   <Button variant="outline">
                     <Edit className="h-4 w-4" />
                     Edit
+                  </Button>
+                </Link>
+                <Link href={`/projects/${project.slug}/calls/new`}>
+                  <Button variant="outline">
+                    <Megaphone className="h-4 w-4" />
+                    New call
                   </Button>
                 </Link>
                 <form action={deleteProjectAction}>

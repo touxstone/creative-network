@@ -548,6 +548,134 @@ async function main() {
     },
   });
 
+  const demoProjects = await prisma.project.findMany({
+    where: {
+      slug: {
+        in: ['la-casa-del-ultimo-verano', 'llum-de-fabrica', 'itsasargiaren-itzala'],
+      },
+    },
+    select: {
+      id: true,
+      slug: true,
+    },
+  });
+  const projectsBySlug = new Map(demoProjects.map((project) => [project.slug, project]));
+  const casaProject = projectsBySlug.get('la-casa-del-ultimo-verano');
+  const llumProject = projectsBySlug.get('llum-de-fabrica');
+  const itsasargiaProject = projectsBySlug.get('itsasargiaren-itzala');
+
+  if (!casaProject || !llumProject || !itsasargiaProject) {
+    throw new Error('Demo projects were not seeded before project calls.');
+  }
+
+  await prisma.projectCall.upsert({
+    where: { id: 'demo-call-casa-lead-performer' },
+    update: {
+      projectId: casaProject.id,
+      creatorId: leah.id,
+      title: 'Buscamos actriz protagonista para teaser dramático',
+      role: 'Actriz protagonista',
+      discipline: 'Casting',
+      description:
+        'Buscamos una intérprete para una prueba de tono de dos escenas. Interesa una presencia contenida, naturalista, con disponibilidad para lectura remota y una jornada de ensayo en Madrid.',
+      language: 'Español',
+      location: 'Madrid / Remoto',
+      status: 'OPEN',
+    },
+    create: {
+      id: 'demo-call-casa-lead-performer',
+      projectId: casaProject.id,
+      creatorId: leah.id,
+      title: 'Buscamos actriz protagonista para teaser dramático',
+      role: 'Actriz protagonista',
+      discipline: 'Casting',
+      description:
+        'Buscamos una intérprete para una prueba de tono de dos escenas. Interesa una presencia contenida, naturalista, con disponibilidad para lectura remota y una jornada de ensayo en Madrid.',
+      language: 'Español',
+      location: 'Madrid / Remoto',
+      status: 'OPEN',
+    },
+  });
+
+  await prisma.projectCall.upsert({
+    where: { id: 'demo-call-llum-director-foto' },
+    update: {
+      projectId: llumProject.id,
+      creatorId: nico.id,
+      title: 'Cerquem direcció de fotografia per curt en català',
+      role: 'Direcció de fotografia',
+      discipline: 'Camera / Visual style',
+      description:
+        'Busquem una mirada visual per treballar llum industrial, textures de barri i espais reconvertits. El primer pas seria revisar moodboards externs i preparar una prova curta.',
+      language: 'Català',
+      location: 'Barcelona / Terrassa',
+      status: 'OPEN',
+    },
+    create: {
+      id: 'demo-call-llum-director-foto',
+      projectId: llumProject.id,
+      creatorId: nico.id,
+      title: 'Cerquem direcció de fotografia per curt en català',
+      role: 'Direcció de fotografia',
+      discipline: 'Camera / Visual style',
+      description:
+        'Busquem una mirada visual per treballar llum industrial, textures de barri i espais reconvertits. El primer pas seria revisar moodboards externs i preparar una prova curta.',
+      language: 'Català',
+      location: 'Barcelona / Terrassa',
+      status: 'OPEN',
+    },
+  });
+
+  await prisma.projectCall.upsert({
+    where: { id: 'demo-call-itsasargia-script-polish' },
+    update: {
+      projectId: itsasargiaProject.id,
+      creatorId: aisha.id,
+      title: 'Euskarazko gidoi-oharrak eta elkarrizketa polish',
+      role: 'Script consultant',
+      discipline: 'Writing',
+      description:
+        'Idazketa-talde txiki bat osatzeko deialdia: elkarrizketen naturaltasuna, isiltasunaren erritmoa eta kostaldeko herri baten tonu emozionala landu nahi dira.',
+      language: 'Euskera',
+      location: 'Donostia / Online',
+      status: 'OPEN',
+    },
+    create: {
+      id: 'demo-call-itsasargia-script-polish',
+      projectId: itsasargiaProject.id,
+      creatorId: aisha.id,
+      title: 'Euskarazko gidoi-oharrak eta elkarrizketa polish',
+      role: 'Script consultant',
+      discipline: 'Writing',
+      description:
+        'Idazketa-talde txiki bat osatzeko deialdia: elkarrizketen naturaltasuna, isiltasunaren erritmoa eta kostaldeko herri baten tonu emozionala landu nahi dira.',
+      language: 'Euskera',
+      location: 'Donostia / Online',
+      status: 'OPEN',
+    },
+  });
+
+  await prisma.projectApplication.upsert({
+    where: {
+      callId_applicantId: {
+        callId: 'demo-call-casa-lead-performer',
+        applicantId: aisha.id,
+      },
+    },
+    update: {
+      message:
+        'Puedo ayudar a perfilar el casting y preparar una shortlist inicial con perfiles naturales para lectura remota.',
+      status: 'SUBMITTED',
+    },
+    create: {
+      callId: 'demo-call-casa-lead-performer',
+      applicantId: aisha.id,
+      message:
+        'Puedo ayudar a perfilar el casting y preparar una shortlist inicial con perfiles naturales para lectura remota.',
+      status: 'SUBMITTED',
+    },
+  });
+
   console.log('Seeded demo users:');
   console.log('mara@creativenetwork.test / DemoPassword123');
   console.log('leah@creativenetwork.test / DemoPassword123');
@@ -557,6 +685,7 @@ async function main() {
   console.log('Seeded demo network connections and requests.');
   console.log('Seeded demo messaging conversation and messages.');
   console.log('Seeded demo projects and portfolio links.');
+  console.log('Seeded demo project calls and applications.');
 }
 
 main()
