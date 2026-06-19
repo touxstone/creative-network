@@ -1,12 +1,31 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Edit, ExternalLink, Globe2, MapPin, Megaphone, Trash2, UsersRound } from 'lucide-react';
-import { deleteProjectAction } from '@/features/projects/actions';
+import {
+  Edit,
+  ExternalLink,
+  Globe2,
+  LinkIcon,
+  MapPin,
+  Megaphone,
+  Plus,
+  Trash2,
+  UserPlus,
+  UsersRound,
+} from 'lucide-react';
+import {
+  addProjectLinkAction,
+  addProjectMemberAction,
+  deleteProjectAction,
+  deleteProjectLinkAction,
+  removeProjectMemberAction,
+} from '@/features/projects/actions';
 import { getProjectBySlug } from '@/features/projects/queries';
 import { projectStatusLabels } from '@/features/projects/constants';
 import { auth } from '@/core/auth/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface ProjectPageProps {
   params: Promise<{ slug: string }>;
@@ -74,17 +93,43 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <CardHeader>
             <CardTitle>Team</CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-3 sm:grid-cols-2">
-            {project.members.map((member) => (
-              <Link
-                key={member.id}
-                href={`/profile/${member.user.id}`}
-                className="rounded-md border border-border p-4 hover:border-accent"
-              >
-                <div className="font-semibold">{member.user.name ?? member.user.username}</div>
-                <div className="mt-1 text-sm text-muted-foreground">{member.role}</div>
-              </Link>
-            ))}
+          <CardContent className="space-y-4">
+            <div className="grid gap-3 sm:grid-cols-2">
+              {project.members.map((member) => (
+                <div key={member.id} className="rounded-md border border-border p-4">
+                  <Link href={`/profile/${member.user.id}`} className="font-semibold hover:text-primary">
+                    {member.user.name ?? member.user.username}
+                  </Link>
+                  <div className="mt-1 text-sm text-muted-foreground">{member.role}</div>
+                  {isOwner && member.user.id !== project.owner.id ? (
+                    <form action={removeProjectMemberAction} className="mt-3">
+                      <input type="hidden" name="memberId" value={member.id} />
+                      <Button variant="outline" className="h-8">
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Remove
+                      </Button>
+                    </form>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+            {isOwner ? (
+              <form action={addProjectMemberAction} className="grid gap-3 rounded-md border border-border p-4 sm:grid-cols-[1fr_1fr_auto]">
+                <input type="hidden" name="projectId" value={project.id} />
+                <div className="space-y-2">
+                  <Label htmlFor="identifier">Username or email</Label>
+                  <Input id="identifier" name="identifier" placeholder="leahmorgan" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="role">Role</Label>
+                  <Input id="role" name="role" placeholder="Writer, producer..." required />
+                </div>
+                <Button className="self-end">
+                  <UserPlus className="h-4 w-4" />
+                  Add
+                </Button>
+              </form>
+            ) : null}
           </CardContent>
         </Card>
       </section>
@@ -116,17 +161,60 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </CardHeader>
             <CardContent className="space-y-3">
               {project.links.map((link) => (
-                <a
-                  key={link.id}
-                  href={link.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center justify-between gap-3 rounded-md border border-border p-3 text-sm font-medium hover:border-accent"
-                >
-                  {link.label}
-                  <ExternalLink className="h-4 w-4" />
-                </a>
+                <div key={link.id} className="flex items-center gap-2">
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex min-w-0 flex-1 items-center justify-between gap-3 rounded-md border border-border p-3 text-sm font-medium hover:border-accent"
+                  >
+                    <span className="truncate">{link.label}</span>
+                    <ExternalLink className="h-4 w-4 shrink-0" />
+                  </a>
+                  {isOwner ? (
+                    <form action={deleteProjectLinkAction}>
+                      <input type="hidden" name="linkId" value={link.id} />
+                      <Button variant="outline" aria-label={`Remove ${link.label}`} className="h-10 w-10 px-0">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </form>
+                  ) : null}
+                </div>
               ))}
+            </CardContent>
+          </Card>
+        ) : null}
+        {isOwner ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Add resource</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form action={addProjectLinkAction} className="space-y-3">
+                <input type="hidden" name="projectId" value={project.id} />
+                <div className="space-y-2">
+                  <Label htmlFor="label">Label</Label>
+                  <Input id="label" name="label" placeholder="Pitch deck, reel, moodboard..." required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="url">URL</Label>
+                  <Input id="url" name="url" type="url" placeholder="https://..." required />
+                </div>
+                <Button variant="outline" className="w-full">
+                  <Plus className="h-4 w-4" />
+                  Add resource
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        ) : null}
+        {!isOwner && project.links.length === 0 ? (
+          <Card>
+            <CardContent className="p-5">
+              <div className="flex items-start gap-3 text-sm text-muted-foreground">
+                <LinkIcon className="mt-1 h-4 w-4 text-accent" />
+                No external resources have been linked yet.
+              </div>
             </CardContent>
           </Card>
         ) : null}

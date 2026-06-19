@@ -20,6 +20,26 @@ const projectSchema = z.object({
   linkUrl: z.string().trim().url().optional().or(z.literal('')),
 });
 
+const projectLinkSchema = z.object({
+  projectId: z.string().min(1),
+  label: z.string().trim().min(2).max(80),
+  url: z.string().trim().url(),
+});
+
+const deleteProjectLinkSchema = z.object({
+  linkId: z.string().min(1),
+});
+
+const projectMemberSchema = z.object({
+  projectId: z.string().min(1),
+  identifier: z.string().trim().min(2).max(160),
+  role: z.string().trim().min(2).max(120),
+});
+
+const removeProjectMemberSchema = z.object({
+  memberId: z.string().min(1),
+});
+
 const deleteProjectSchema = z.object({
   projectId: z.string().min(1),
 });
@@ -64,6 +84,17 @@ async function createUniqueSlug(title: string, existingProjectId?: string) {
   }
 }
 
+async function getOwnedProject(projectId: string, userId: string) {
+  return prisma.project.findUnique({
+    where: { id: projectId },
+    select: {
+      id: true,
+      slug: true,
+      ownerId: true,
+    },
+  }).then((project) => (project?.ownerId === userId ? project : null));
+}
+
 export async function saveProjectAction(formData: FormData) {
   const userId = await requireUserId();
   const parsed = projectSchema.safeParse(Object.fromEntries(formData));
@@ -99,10 +130,11 @@ export async function saveProjectAction(formData: FormData) {
           language: parsed.data.language || null,
           location: parsed.data.location || null,
           ownerRole: parsed.data.ownerRole || null,
-          links: {
-            deleteMany: {},
-            create: linkUrl ? [{ label: linkLabel, url: linkUrl }] : [],
-          },
+          links: linkUrl
+            ? {
+                create: [{ label: linkLabel, url: linkUrl }],
+              }
+            : undefined,
         },
         select: { slug: true },
       })
@@ -134,6 +166,150 @@ export async function saveProjectAction(formData: FormData) {
   revalidatePath(`/projects/${project.slug}`);
   revalidatePath(`/profile/${userId}`);
   redirect(`/projects/${project.slug}`);
+}
+
+export async function addProjectLinkAction(formData: FormData) {
+  const userId = await requireUserId();
+  const parsed = projectLinkSchema.safeParse(Object.fromEntries(formData));
+
+  if (!parsed.success) {
+    redirect('/projects?error=link');
+  }
+
+  const project = await getOwnedProject(parsed.data.projectId, userId);
+
+  if (!project) {
+    redirect('/projects?error=permission');
+  }
+
+  await prisma.projectLink.create({
+    data: {
+      projectId: project.id,
+      label: parsed.data.label,
+      url: parsed.data.url,
+    },
+  });
+
+  revalidatePath(`/projects/${project.slug}`);
+  redirect(`/projects/${project.slug}`);
+}
+
+export async function deleteProjectLinkAction(formData: FormData) {
+  const userId = await requireUserId();
+  const parsed = deleteProjectLinkSchema.safeParse(Object.fromEntries(formData));
+
+  if (!parsed.success) {
+    redirect('/projects?error=link');
+  }
+
+  const link = await prisma.projectLink.findUnique({
+    where: { id: parsed.data.linkId },
+    select: {
+      id: true,
+      project: {
+        select: {
+          id: true,
+          slug: true,
+          ownerId: true,
+        },
+      },
+    },
+  });
+
+  if (!link || link.project.ownerId !== userId) {
+    redirect('/projects?error=permission');
+  }
+
+  await prisma.projectLink.delete({
+    where: { id: link.id },
+  });
+
+  revalidatePath(`/projects/${link.project.slug}`);
+  redirect(`/projects/${link.project.slug}`);
+}
+
+export async function addProjectMemberAction(formData: FormData) {
+  const userId = await requireUserId();
+  const parsed = projectMemberSchema.safeParse(Object.fromEntries(formData));
+
+  if (!parsed.success) {
+    redirect('/projects?error=member');
+  }
+
+  const project = await getOwnedProject(parsed.data.projectId, userId);
+
+  if (!project) {
+    redirect('/projects?error=permission');
+  }
+
+  const identifier = parsed.data.identifier.toLowerCase();
+  const memberUser = await prisma.user.findFirst({
+    where: {
+      OR: [{ email: identifier }, { username: identifier }],
+    },
+    select: { id: true },
+  });
+
+  if (!memberUser) {
+    redirect(`/projects/${project.slug}?error=member`);
+  }
+
+  await prisma.projectMember.upsert({
+    where: {
+      projectId_userId: {
+        projectId: project.id,
+        userId: memberUser.id,
+      },
+    },
+    update: {
+      role: parsed.data.role,
+    },
+    create: {
+      projectId: project.id,
+      userId: memberUser.id,
+      role: parsed.data.role,
+    },
+  });
+
+  revalidatePath(`/projects/${project.slug}`);
+  revalidatePath(`/profile/${memberUser.id}`);
+  redirect(`/projects/${project.slug}`);
+}
+
+export async function removeProjectMemberAction(formData: FormData) {
+  const userId = await requireUserId();
+  const parsed = removeProjectMemberSchema.safeParse(Object.fromEntries(formData));
+
+  if (!parsed.success) {
+    redirect('/projects?error=member');
+  }
+
+  const member = await prisma.projectMember.findUnique({
+    where: { id: parsed.data.memberId },
+    select: {
+      id: true,
+      userId: true,
+      project: {
+        select: {
+          id: true,
+          slug: true,
+          ownerId: true,
+        },
+      },
+    },
+  });
+
+  if (!member || member.project.ownerId !== userId || member.userId === userId) {
+    redirect('/projects?error=permission');
+  }
+
+  await prisma.projectMember.delete({
+    where: { id: member.id },
+  });
+
+  revalidatePath(`/projects/${member.project.slug}`);
+  revalidatePath(`/profile/${member.userId}`);
+  redirect(`/projects/${member.project.slug}`);
 }
 
 export async function deleteProjectAction(formData: FormData) {

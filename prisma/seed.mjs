@@ -286,6 +286,10 @@ async function main() {
             label: 'Pitch deck placeholder',
             url: 'https://example.com/contained-drama-deck',
           },
+          {
+            label: 'Tone references',
+            url: 'https://example.com/contained-drama-tone',
+          },
         ],
       },
     },
@@ -312,6 +316,10 @@ async function main() {
           {
             label: 'Pitch deck placeholder',
             url: 'https://example.com/contained-drama-deck',
+          },
+          {
+            label: 'Tone references',
+            url: 'https://example.com/contained-drama-tone',
           },
         ],
       },
@@ -398,6 +406,10 @@ async function main() {
             label: 'Biblia de serie mock',
             url: 'https://example.com/la-casa-del-ultimo-verano',
           },
+          {
+            label: 'Moodboard mock',
+            url: 'https://example.com/la-casa-moodboard',
+          },
         ],
       },
     },
@@ -424,6 +436,10 @@ async function main() {
           {
             label: 'Biblia de serie mock',
             url: 'https://example.com/la-casa-del-ultimo-verano',
+          },
+          {
+            label: 'Moodboard mock',
+            url: 'https://example.com/la-casa-moodboard',
           },
         ],
       },
