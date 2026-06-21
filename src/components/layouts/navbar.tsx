@@ -56,9 +56,11 @@ export function Navbar({ user }: NavbarProps) {
           })}
         </nav>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" aria-label="Search" className="h-10 w-10 px-0">
-            <Search className="h-4 w-4" />
-          </Button>
+          <Link href="/search" aria-label="Search">
+            <Button variant="ghost" className="h-10 w-10 px-0">
+              <Search className="h-4 w-4" />
+            </Button>
+          </Link>
           <Button variant="ghost" aria-label="Notifications" className="h-10 w-10 px-0">
             <Bell className="h-4 w-4" />
           </Button>
