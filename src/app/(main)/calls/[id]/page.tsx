@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { CalendarDays, FolderKanban, MapPin, Send, UserRound } from 'lucide-react';
-import { applyToProjectCallAction } from '@/features/project-calls/actions';
+import { CalendarDays, Edit, FolderKanban, MapPin, Send, Trash2, UserRound } from 'lucide-react';
+import { applyToProjectCallAction, deleteProjectCallAction } from '@/features/project-calls/actions';
 import { applicationStatusLabels, callStatusLabels } from '@/features/project-calls/constants';
 import { getProjectCallById } from '@/features/project-calls/queries';
 import { auth } from '@/core/auth/auth';
@@ -110,6 +110,29 @@ export default async function CallPage({ params }: CallPageProps) {
       </section>
 
       <aside className="space-y-4">
+        {isOwner ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Manage call</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Link href={`/calls/${call.id}/edit`}>
+                <Button variant="outline" className="w-full">
+                  <Edit className="h-4 w-4" />
+                  Edit call
+                </Button>
+              </Link>
+              <form action={deleteProjectCallAction}>
+                <input type="hidden" name="callId" value={call.id} />
+                <Button variant="outline" className="w-full text-red-700 hover:text-red-800">
+                  <Trash2 className="h-4 w-4" />
+                  Delete call
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        ) : null}
+
         <Card>
           <CardHeader>
             <CardTitle>Call details</CardTitle>

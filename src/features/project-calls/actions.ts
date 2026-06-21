@@ -8,6 +8,7 @@ import { prisma } from '@/lib/db/prisma';
 import { callStatusValues } from './constants';
 
 const callSchema = z.object({
+  callId: z.string().optional(),
   projectId: z.string().min(1),
   title: z.string().trim().min(3).max(140),
   role: z.string().trim().min(2).max(120),
@@ -22,6 +23,10 @@ const callSchema = z.object({
 const applicationSchema = z.object({
   callId: z.string().min(1),
   message: z.string().trim().min(20).max(2000),
+});
+
+const deleteCallSchema = z.object({
+  callId: z.string().min(1),
 });
 
 async function requireUserId() {
@@ -43,12 +48,56 @@ function parseDeadline(value?: string) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-export async function createProjectCallAction(formData: FormData) {
+export async function saveProjectCallAction(formData: FormData) {
   const userId = await requireUserId();
   const parsed = callSchema.safeParse(Object.fromEntries(formData));
 
   if (!parsed.success) {
     redirect('/calls?error=call');
+  }
+
+  if (parsed.data.callId) {
+    const existingCall = await prisma.projectCall.findUnique({
+      where: { id: parsed.data.callId },
+      select: {
+        id: true,
+        creatorId: true,
+        projectId: true,
+        project: {
+          select: {
+            slug: true,
+            ownerId: true,
+          },
+        },
+      },
+    });
+
+    if (
+      !existingCall ||
+      existingCall.projectId !== parsed.data.projectId ||
+      (existingCall.creatorId !== userId && existingCall.project.ownerId !== userId)
+    ) {
+      redirect(`/calls/${parsed.data.callId}?error=permission`);
+    }
+
+    await prisma.projectCall.update({
+      where: { id: existingCall.id },
+      data: {
+        title: parsed.data.title,
+        role: parsed.data.role,
+        discipline: parsed.data.discipline || null,
+        description: parsed.data.description,
+        language: parsed.data.language || null,
+        location: parsed.data.location || null,
+        status: parsed.data.status,
+        deadline: parseDeadline(parsed.data.deadline),
+      },
+    });
+
+    revalidatePath('/calls');
+    revalidatePath(`/calls/${existingCall.id}`);
+    revalidatePath(`/projects/${existingCall.project.slug}`);
+    redirect(`/calls/${existingCall.id}`);
   }
 
   const project = await prisma.project.findUnique({
@@ -79,6 +128,42 @@ export async function createProjectCallAction(formData: FormData) {
   revalidatePath('/calls');
   revalidatePath(`/projects/${project.slug}`);
   redirect(`/calls/${call.id}`);
+}
+
+export async function deleteProjectCallAction(formData: FormData) {
+  const userId = await requireUserId();
+  const parsed = deleteCallSchema.safeParse(Object.fromEntries(formData));
+
+  if (!parsed.success) {
+    redirect('/calls?error=delete');
+  }
+
+  const call = await prisma.projectCall.findUnique({
+    where: { id: parsed.data.callId },
+    select: {
+      id: true,
+      creatorId: true,
+      project: {
+        select: {
+          slug: true,
+          ownerId: true,
+        },
+      },
+    },
+  });
+
+  if (!call || (call.creatorId !== userId && call.project.ownerId !== userId)) {
+    redirect(`/calls/${parsed.data.callId}?error=permission`);
+  }
+
+  await prisma.projectCall.delete({
+    where: { id: call.id },
+  });
+
+  revalidatePath('/calls');
+  revalidatePath(`/calls/${call.id}`);
+  revalidatePath(`/projects/${call.project.slug}`);
+  redirect('/calls');
 }
 
 export async function applyToProjectCallAction(formData: FormData) {
