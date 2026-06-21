@@ -29,10 +29,14 @@ import { Label } from '@/components/ui/label';
 
 interface ProjectPageProps {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{
+    error?: string;
+    team?: string;
+  }>;
 }
 
-export default async function ProjectPage({ params }: ProjectPageProps) {
-  const [{ slug }, session] = await Promise.all([params, auth()]);
+export default async function ProjectPage({ params, searchParams }: ProjectPageProps) {
+  const [{ slug }, session, query] = await Promise.all([params, auth(), searchParams]);
   const project = await getProjectBySlug(slug);
 
   if (!project) {
@@ -94,6 +98,22 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <CardTitle>Team</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {query?.team === 'added' ? (
+              <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+                Team member added or updated.
+              </div>
+            ) : null}
+            {query?.error === 'member-not-found' ? (
+              <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                No user found with that username or email. Try a demo username like `leahmorgan`,
+                `aishagrant`, `nicoreyes`, or include the exact email.
+              </div>
+            ) : null}
+            {query?.error === 'permission' ? (
+              <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                Only the project owner can manage the team.
+              </div>
+            ) : null}
             <div className="grid gap-3 sm:grid-cols-2">
               {project.members.map((member) => (
                 <div key={member.id} className="rounded-md border border-border p-4">
@@ -118,13 +138,18 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 <input type="hidden" name="projectId" value={project.id} />
                 <div className="space-y-2">
                   <Label htmlFor="identifier">Username or email</Label>
-                  <Input id="identifier" name="identifier" placeholder="leahmorgan" required />
+                  <Input
+                    id="identifier"
+                    name="identifier"
+                    placeholder="leahmorgan or @leahmorgan"
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="role">Role</Label>
                   <Input id="role" name="role" placeholder="Writer, producer..." required />
                 </div>
-                <Button className="self-end">
+                <Button type="submit" className="self-end">
                   <UserPlus className="h-4 w-4" />
                   Add
                 </Button>

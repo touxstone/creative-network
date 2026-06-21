@@ -242,7 +242,7 @@ export async function addProjectMemberAction(formData: FormData) {
     redirect('/projects?error=permission');
   }
 
-  const identifier = parsed.data.identifier.toLowerCase();
+  const identifier = parsed.data.identifier.toLowerCase().replace(/^@/, '');
   const memberUser = await prisma.user.findFirst({
     where: {
       OR: [{ email: identifier }, { username: identifier }],
@@ -251,7 +251,7 @@ export async function addProjectMemberAction(formData: FormData) {
   });
 
   if (!memberUser) {
-    redirect(`/projects/${project.slug}?error=member`);
+    redirect(`/projects/${project.slug}?error=member-not-found`);
   }
 
   await prisma.projectMember.upsert({
@@ -273,7 +273,7 @@ export async function addProjectMemberAction(formData: FormData) {
 
   revalidatePath(`/projects/${project.slug}`);
   revalidatePath(`/profile/${memberUser.id}`);
-  redirect(`/projects/${project.slug}`);
+  redirect(`/projects/${project.slug}?team=added`);
 }
 
 export async function removeProjectMemberAction(formData: FormData) {
