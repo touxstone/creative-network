@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { auth } from '@/core/auth/auth';
 import { prisma } from '@/lib/db/prisma';
+import { createNotification } from '@/features/notifications/actions';
 
 const createPostSchema = z.object({
   content: z.string().trim().min(1, 'Post cannot be empty.').max(2000),
@@ -74,12 +75,29 @@ export async function toggleLikeAction(formData: FormData) {
       },
     });
   } else {
+    const post = await prisma.post.findUnique({
+      where: { id: parsed.data.postId },
+      select: { authorId: true },
+    });
+
     await prisma.like.create({
       data: {
         postId: parsed.data.postId,
         userId,
       },
     });
+
+    if (post) {
+      await createNotification({
+        recipientId: post.authorId,
+        actorId: userId,
+        type: 'POST_LIKE',
+        title: 'New like on your post',
+        body: 'Someone reacted to your Lounge post.',
+        href: '/feed',
+        dedupeKey: `post-like:${parsed.data.postId}:${userId}`,
+      });
+    }
   }
 
   revalidatePath('/feed');
@@ -93,12 +111,29 @@ export async function createCommentAction(formData: FormData) {
     redirect('/feed?error=comment');
   }
 
-  await prisma.comment.create({
+  const comment = await prisma.comment.create({
     data: {
       postId: parsed.data.postId,
       authorId: userId,
       content: parsed.data.content,
     },
+    select: {
+      post: {
+        select: {
+          authorId: true,
+        },
+      },
+    },
+  });
+
+  await createNotification({
+    recipientId: comment.post.authorId,
+    actorId: userId,
+    type: 'POST_COMMENT',
+    title: 'New comment on your post',
+    body: parsed.data.content,
+    href: '/feed',
+    dedupeKey: `post-comment:${parsed.data.postId}:${userId}`,
   });
 
   revalidatePath('/feed');

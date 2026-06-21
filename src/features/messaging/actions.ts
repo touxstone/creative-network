@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { auth } from '@/core/auth/auth';
 import { prisma } from '@/lib/db/prisma';
+import { createNotification } from '@/features/notifications/actions';
 
 const startConversationSchema = z.object({
   recipientId: z.string().min(1),
@@ -109,7 +110,19 @@ export async function sendMessageAction(formData: FormData) {
         userId,
       },
     },
-    select: { id: true },
+    select: {
+      id: true,
+      conversation: {
+        select: {
+          title: true,
+          participants: {
+            select: {
+              userId: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   if (!participant) {
@@ -132,19 +145,36 @@ export async function sendMessageAction(formData: FormData) {
     }
   }
 
-  await prisma.message.create({
+  const message = await prisma.message.create({
     data: {
       conversationId: parsed.data.conversationId,
       senderId: userId,
       content: parsed.data.content,
       replyToId,
     },
+    select: { id: true },
   });
 
   await prisma.conversation.update({
     where: { id: parsed.data.conversationId },
     data: { updatedAt: new Date() },
   });
+
+  await Promise.all(
+    participant.conversation.participants
+      .filter((conversationParticipant) => conversationParticipant.userId !== userId)
+      .map((conversationParticipant) =>
+        createNotification({
+          recipientId: conversationParticipant.userId,
+          actorId: userId,
+          type: 'MESSAGE',
+          title: participant.conversation.title ?? 'New message',
+          body: parsed.data.content,
+          href: `/messages/${parsed.data.conversationId}`,
+          dedupeKey: `message:${message.id}:${conversationParticipant.userId}`,
+        }),
+      ),
+  );
 
   revalidatePath('/messages');
   revalidatePath(`/messages/${parsed.data.conversationId}`);

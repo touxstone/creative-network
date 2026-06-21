@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { auth } from '@/core/auth/auth';
 import { prisma } from '@/lib/db/prisma';
+import { createNotification } from '@/features/notifications/actions';
 
 const recipientSchema = z.object({
   recipientId: z.string().min(1),
@@ -52,12 +53,23 @@ export async function sendConnectionRequestAction(formData: FormData) {
   });
 
   if (!existingConnection) {
-    await prisma.connection.create({
+    const connection = await prisma.connection.create({
       data: {
         userAId: userId,
         userBId: parsed.data.recipientId,
         status: 'PENDING',
       },
+      select: { id: true },
+    });
+
+    await createNotification({
+      recipientId: parsed.data.recipientId,
+      actorId: userId,
+      type: 'CONNECTION_REQUEST',
+      title: 'New connection request',
+      body: 'A creative wants to connect with you.',
+      href: '/network',
+      dedupeKey: `connection-request:${connection.id}`,
     });
   }
 
@@ -77,6 +89,7 @@ export async function respondConnectionRequestAction(formData: FormData) {
     where: { id: parsed.data.connectionId },
     select: {
       id: true,
+      userAId: true,
       userBId: true,
       status: true,
     },
@@ -92,6 +105,18 @@ export async function respondConnectionRequestAction(formData: FormData) {
       status: parsed.data.intent === 'accept' ? 'ACCEPTED' : 'REJECTED',
     },
   });
+
+  if (parsed.data.intent === 'accept') {
+    await createNotification({
+      recipientId: connection.userAId,
+      actorId: userId,
+      type: 'CONNECTION_ACCEPTED',
+      title: 'Connection accepted',
+      body: 'You can now message each other from Network or Messages.',
+      href: '/network',
+      dedupeKey: `connection-accepted:${connection.id}`,
+    });
+  }
 
   revalidatePath('/network');
   redirect('/network');

@@ -13,6 +13,7 @@ import {
 import type { Session } from 'next-auth';
 import { logoutAction } from '@/core/auth/actions';
 import { Button } from '@/components/ui/button';
+import { getUnreadNotificationCount } from '@/features/notifications/queries';
 
 function getNavItems(userId: string) {
   return [
@@ -30,8 +31,9 @@ interface NavbarProps {
   user: Session['user'];
 }
 
-export function Navbar({ user }: NavbarProps) {
+export async function Navbar({ user }: NavbarProps) {
   const navItems = getNavItems(user.id);
+  const unreadNotifications = await getUnreadNotificationCount(user.id);
 
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-white/95 backdrop-blur">
@@ -61,9 +63,16 @@ export function Navbar({ user }: NavbarProps) {
               <Search className="h-4 w-4" />
             </Button>
           </Link>
-          <Button variant="ghost" aria-label="Notifications" className="h-10 w-10 px-0">
-            <Bell className="h-4 w-4" />
-          </Button>
+          <Link href="/notifications" aria-label="Notifications" className="relative">
+            <Button variant="ghost" className="h-10 w-10 px-0">
+              <Bell className="h-4 w-4" />
+            </Button>
+            {unreadNotifications > 0 ? (
+              <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
+                {unreadNotifications > 9 ? '9+' : unreadNotifications}
+              </span>
+            ) : null}
+          </Link>
           <form action={logoutAction}>
             <Button variant="outline" aria-label="Sign out" className="h-10 w-10 px-0">
               <LogOut className="h-4 w-4" />
