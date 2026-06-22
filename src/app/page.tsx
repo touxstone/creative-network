@@ -4,9 +4,12 @@ import {
   ArrowRight,
   CheckCircle2,
   Clapperboard,
+  ExternalLink,
+  LibraryBig,
   MessageSquare,
   Network,
   Play,
+  ShieldCheck,
   UserPlus,
   UsersRound,
 } from 'lucide-react';
@@ -17,6 +20,7 @@ import {
   getLandingLocale,
   landingCopy,
 } from '@/lib/landing-i18n';
+import { openKnowledgeResources } from '@/lib/open-knowledge-resources';
 
 interface HomePageProps {
   searchParams?: Promise<{
@@ -26,6 +30,22 @@ interface HomePageProps {
 
 function localizedHref(path: string, locale: string) {
   return locale === 'en' ? path : `${path}?lang=${locale}`;
+}
+
+const knowledgeVisuals = {
+  archive: 'bg-[linear-gradient(135deg,#111827_0%,#8f1d2c_54%,#f8fafc_54%,#f8fafc_100%)]',
+  voice: 'bg-[linear-gradient(135deg,#0f172a_0%,#0f766e_50%,#e2e8f0_50%,#e2e8f0_100%)]',
+  cinema: 'bg-[linear-gradient(135deg,#18181b_0%,#27272a_45%,#be123c_45%,#be123c_62%,#fafafa_62%)]',
+  commons: 'bg-[linear-gradient(135deg,#164e63_0%,#155e75_50%,#f8fafc_50%,#f8fafc_100%)]',
+  text: 'bg-[linear-gradient(135deg,#1f2937_0%,#365314_52%,#f4f4f5_52%,#f4f4f5_100%)]',
+  europe: 'bg-[linear-gradient(135deg,#1e3a8a_0%,#0f766e_52%,#f8fafc_52%,#f8fafc_100%)]',
+} as const;
+
+function formatRightsStatus(value: string) {
+  return value
+    .split('_')
+    .map((part) => part.toLowerCase())
+    .join(' ');
 }
 
 export default async function HomePage({ searchParams }: HomePageProps) {
@@ -198,6 +218,72 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             {copy.openWorkspace}
             <ArrowRight className="h-4 w-4" />
           </Link>
+        </div>
+      </section>
+
+      <section className="border-t border-border bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <div className="flex items-center gap-2 text-sm font-medium text-accent">
+                <LibraryBig className="h-4 w-4" />
+                {copy.knowledgeEyebrow}
+              </div>
+              <h2 className="mt-2 text-2xl font-bold">{copy.knowledgeTitle}</h2>
+              <p className="mt-2 max-w-3xl text-muted-foreground">{copy.knowledgeBody}</p>
+            </div>
+            <div className="rounded-md border border-border bg-muted px-4 py-3 text-sm text-muted-foreground lg:max-w-sm">
+              <ShieldCheck className="mb-2 h-4 w-4 text-accent" />
+              {copy.knowledgeRightsNote}
+            </div>
+          </div>
+
+          <div className="mt-7 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {openKnowledgeResources.map((resource) => (
+              <article key={resource.sourceUrl} className="overflow-hidden rounded-lg border border-border bg-white">
+                <div className={`h-24 ${knowledgeVisuals[resource.visualTone]}`}>
+                  <div className="flex h-full items-end justify-between p-4 text-white">
+                    <div className="text-xs font-semibold uppercase tracking-wide">
+                      {resource.resourceType}
+                    </div>
+                    <div className="rounded-md bg-black/35 px-2 py-1 text-xs">
+                      {resource.riskLevel} review
+                    </div>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <h3 className="text-lg font-semibold">{resource.landingCardTitle}</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    {resource.landingCardSummary}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {resource.languages.slice(0, 2).map((language) => (
+                      <span key={language} className="rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground">
+                        {language}
+                      </span>
+                    ))}
+                    {resource.disciplines.slice(0, 2).map((discipline) => (
+                      <span key={discipline} className="rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground">
+                        {discipline}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="mt-4 text-xs leading-5 text-muted-foreground">
+                    Rights: {formatRightsStatus(resource.rightsStatus)}
+                  </p>
+                  <a
+                    href={resource.sourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-md border border-border bg-white px-4 text-sm font-semibold transition hover:bg-muted"
+                  >
+                    Visit source
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 

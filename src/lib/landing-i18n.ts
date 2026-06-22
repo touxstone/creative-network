@@ -44,6 +44,12 @@ export const landingCopy = {
       'The authenticated demo already has persisted profiles, social activity, and networking requests.',
     networkingPreview: 'Networking preview',
     openWorkspace: 'Open workspace',
+    knowledgeEyebrow: 'Open knowledge shelf',
+    knowledgeTitle: 'Curated public resources for creative research',
+    knowledgeBody:
+      'A first signal of the platform’s editorial direction: specific external items for film, stage, voice, writing, and production teams, gathered with item-level rights review notes.',
+    knowledgeRightsNote:
+      'Creative Network links to the original source. Each item keeps its own rights, license, and jurisdiction notes.',
     specialtiesTitle: 'Specialties for the next polish slice',
     specialties:
       'Profile specialty now has guided suggestions while still allowing custom roles.',
@@ -90,6 +96,12 @@ export const landingCopy = {
       'La demo autenticada ya incluye perfiles persistidos, actividad social y solicitudes de networking.',
     networkingPreview: 'Vista previa de red',
     openWorkspace: 'Abrir espacio de trabajo',
+    knowledgeEyebrow: 'Open knowledge shelf',
+    knowledgeTitle: 'Recursos públicos curados para investigación creativa',
+    knowledgeBody:
+      'Un primer indicio de la línea editorial de la plataforma: piezas externas concretas para cine, escena, voz, escritura y producción, reunidas con notas de revisión de derechos caso por caso.',
+    knowledgeRightsNote:
+      'Creative Network enlaza la fuente original. Cada recurso conserva sus propias notas de derechos, licencia y jurisdicción.',
     specialtiesTitle: 'Especialidades para el siguiente pulido',
     specialties:
       'La especialidad del perfil ya ofrece sugerencias guiadas y permite roles personalizados.',
@@ -136,6 +148,12 @@ export const landingCopy = {
       'La demo autenticada ja inclou perfils persistits, activitat social i sol·licituds de networking.',
     networkingPreview: 'Vista prèvia de xarxa',
     openWorkspace: 'Obre l’espai de treball',
+    knowledgeEyebrow: 'Open knowledge shelf',
+    knowledgeTitle: 'Recursos públics curats per a recerca creativa',
+    knowledgeBody:
+      'Un primer senyal de la línia editorial de la plataforma: peces externes concretes per a cinema, escena, veu, escriptura i producció, reunides amb notes de revisió de drets cas per cas.',
+    knowledgeRightsNote:
+      'Creative Network enllaça la font original. Cada recurs conserva les seves pròpies notes de drets, llicència i jurisdicció.',
     specialtiesTitle: 'Especialitats per al següent poliment',
     specialties:
       'L’especialitat del perfil ja ofereix suggeriments guiats i permet rols personalitzats.',
@@ -182,6 +200,12 @@ export const landingCopy = {
       'Autentifikatutako demoak profil iraunkorrak, jarduera soziala eta networking eskaerak ditu dagoeneko.',
     networkingPreview: 'Sarearen aurrebista',
     openWorkspace: 'Ireki lan-eremua',
+    knowledgeEyebrow: 'Open knowledge shelf',
+    knowledgeTitle: 'Sormen ikerketarako baliabide publiko hautatuak',
+    knowledgeBody:
+      'Plataformaren norabide editorialaren lehen seinalea: zinema, eszena, ahotsa, idazketa eta ekoizpen taldeentzako kanpoko pieza zehatzak, eskubideen kasuz kasuko berrikuspen-oharrekin.',
+    knowledgeRightsNote:
+      'Creative Networkek jatorrizko iturrira estekatzen du. Baliabide bakoitzak bere eskubide, lizentzia eta jurisdikzio oharrak mantentzen ditu.',
     specialtiesTitle: 'Hurrengo fintzerako espezialitateak',
     specialties:
       'Profil espezialitateak iradokizun gidatuak ditu eta rol pertsonalizatuak ere onartzen ditu.',
@@ -225,6 +249,10 @@ export const landingCopy = {
     tryBody: string;
     networkingPreview: string;
     openWorkspace: string;
+    knowledgeEyebrow: string;
+    knowledgeTitle: string;
+    knowledgeBody: string;
+    knowledgeRightsNote: string;
     specialtiesTitle: string;
     specialties: string;
     previewPosts: Array<{ author: string; role: string; body: string }>;
