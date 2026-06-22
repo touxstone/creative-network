@@ -692,6 +692,169 @@ async function main() {
     },
   });
 
+  const learningItems = [
+    {
+      id: 'demo-learning-writers-room-remote',
+      slug: 'remote-writers-room-for-proof-of-concepts',
+      title: 'Remote writers room for proof-of-concepts',
+      summary:
+        'A practical workshop for structuring script notes, revision roles, and async feedback without losing authorship.',
+      description:
+        'Designed for small writing teams preparing short films, pitch pilots, or proof-of-concept scenes. The session covers room agreements, ownership of notes, version discipline, feedback rituals, and how to turn remote discussion into an actionable rewrite plan.',
+      format: 'Workshop',
+      discipline: 'Writing',
+      language: 'English',
+      level: 'Intermediate',
+      durationMinutes: 90,
+      instructorName: 'Leah Morgan',
+      instructorRole: 'Screenwriter',
+      provider: 'Creative Network Editorial',
+      startsAt: new Date('2026-07-08T17:00:00.000Z'),
+      externalUrl: 'https://example.com/education/remote-writers-room',
+      status: 'PUBLISHED',
+    },
+    {
+      id: 'demo-learning-casting-self-tape',
+      slug: 'casting-self-tape-notes-for-independent-productions',
+      title: 'Casting and self-tape notes for independent productions',
+      summary:
+        'How to write clear performer briefs, compare tapes fairly, and keep casting feedback useful for a small project.',
+      description:
+        'A focused class for directors, casting collaborators, and producers who need a repeatable self-tape process. It covers role briefs, language around performance notes, shortlist criteria, consent around materials, and a compact review workflow.',
+      format: 'Class',
+      discipline: 'Casting',
+      language: 'English',
+      level: 'Beginner',
+      durationMinutes: 75,
+      instructorName: 'Aisha Grant',
+      instructorRole: 'Casting Director',
+      provider: 'Creative Network Editorial',
+      startsAt: new Date('2026-07-10T18:30:00.000Z'),
+      externalUrl: 'https://example.com/education/casting-self-tape',
+      status: 'PUBLISHED',
+    },
+    {
+      id: 'demo-learning-pitch-package-es',
+      slug: 'paquete-de-pitch-para-series-y-cortos',
+      title: 'Paquete de pitch para series y cortos',
+      summary:
+        'Sesión en español sobre logline, dossier, referencias visuales y señales mínimas para presentar un proyecto.',
+      description:
+        'Pensada para equipos en fase de desarrollo que necesitan ordenar una primera presentación sin sobredimensionar materiales. Se trabaja cómo explicar tono, formato, audiencia, estado del proyecto, necesidades de equipo y próximos pasos de producción.',
+      format: 'Webinar',
+      discipline: 'Development',
+      language: 'Español',
+      level: 'Beginner',
+      durationMinutes: 60,
+      instructorName: 'Mara Soler',
+      instructorRole: 'Producer',
+      provider: 'Creative Network Editorial',
+      startsAt: new Date('2026-07-15T16:00:00.000Z'),
+      externalUrl: 'https://example.com/education/paquete-pitch',
+      status: 'PUBLISHED',
+    },
+    {
+      id: 'demo-learning-collaboracio-cat',
+      slug: 'collaboracio-creativa-en-catala',
+      title: 'Col·laboració creativa en català',
+      summary:
+        'Una trobada per preparar projectes locals amb equips petits, referències externes i rols ben definits.',
+      description:
+        'Sessió introductòria per a creadors que volen coordinar curtmetratges, peces musicals o dossiers visuals en català. Es revisen rols, ritme de reunions, recursos compartits, presentació del projecte i bones pràctiques per evitar confusió en equips distribuïts.',
+      format: 'Roundtable',
+      discipline: 'Collaboration',
+      language: 'Català',
+      level: 'Beginner',
+      durationMinutes: 70,
+      instructorName: 'Nico Reyes',
+      instructorRole: 'Composer',
+      provider: 'Creative Network Editorial',
+      startsAt: new Date('2026-07-18T10:00:00.000Z'),
+      externalUrl: 'https://example.com/education/collaboracio-catala',
+      status: 'PUBLISHED',
+    },
+    {
+      id: 'demo-learning-gidoi-oharrak-eu',
+      slug: 'gidoi-oharrak-eta-elkarrizketa-polish',
+      title: 'Gidoi-oharrak eta elkarrizketa polish',
+      summary:
+        'Euskarazko saio praktikoa elkarrizketak fintzeko, tonuari eusteko eta talde-oharrak antolatzeko.',
+      description:
+        'Idazketa-talde txikientzat pentsatutako preview saioa. Elkarrizketen naturaltasuna, pertsonaien ahotsa, isiluneen erritmoa eta berridazketa-oharren kudeaketa lantzen dira, urruneko lan-fluxu erraz batekin.',
+      format: 'Workshop',
+      discipline: 'Writing',
+      language: 'Euskera',
+      level: 'Intermediate',
+      durationMinutes: 80,
+      instructorName: 'Aisha Grant',
+      instructorRole: 'Casting Director / Script notes',
+      provider: 'Creative Network Editorial',
+      startsAt: new Date('2026-07-22T17:00:00.000Z'),
+      externalUrl: 'https://example.com/education/gidoi-oharrak',
+      status: 'PUBLISHED',
+    },
+    {
+      id: 'demo-learning-composer-cues',
+      slug: 'composer-cues-for-trailers-and-proof-of-concepts',
+      title: 'Composer cues for trailers and proof-of-concepts',
+      summary:
+        'A compact session on spotting, references, cue naming, and handoff expectations for early-stage audiovisual teams.',
+      description:
+        'For composers, editors, and producers collaborating before a final cut exists. The class explains how to discuss emotion, pacing, references, temporary tracks, deliverables, and credit expectations when a project is still exploratory.',
+      format: 'Class',
+      discipline: 'Music',
+      language: 'English',
+      level: 'Intermediate',
+      durationMinutes: 65,
+      instructorName: 'Nico Reyes',
+      instructorRole: 'Composer',
+      provider: 'Creative Network Editorial',
+      startsAt: new Date('2026-07-25T15:30:00.000Z'),
+      externalUrl: 'https://example.com/education/composer-cues',
+      status: 'PUBLISHED',
+    },
+  ];
+
+  for (const item of learningItems) {
+    const { id, ...itemData } = item;
+
+    await prisma.learningItem.upsert({
+      where: { slug: item.slug },
+      update: itemData,
+      create: item,
+    });
+  }
+
+  await prisma.learningBookmark.upsert({
+    where: {
+      itemId_userId: {
+        itemId: 'demo-learning-writers-room-remote',
+        userId: mara.id,
+      },
+    },
+    update: {},
+    create: {
+      itemId: 'demo-learning-writers-room-remote',
+      userId: mara.id,
+      note: 'Useful for the contained drama remote rewrite process.',
+    },
+  });
+
+  await prisma.learningBookmark.upsert({
+    where: {
+      itemId_userId: {
+        itemId: 'demo-learning-pitch-package-es',
+        userId: leah.id,
+      },
+    },
+    update: {},
+    create: {
+      itemId: 'demo-learning-pitch-package-es',
+      userId: leah.id,
+      note: 'Good fit for Spanish-language pitch materials.',
+    },
+  });
+
   console.log('Seeded demo users:');
   console.log('mara@creativenetwork.test / DemoPassword123');
   console.log('leah@creativenetwork.test / DemoPassword123');
@@ -702,6 +865,7 @@ async function main() {
   console.log('Seeded demo messaging conversation and messages.');
   console.log('Seeded demo projects and portfolio links.');
   console.log('Seeded demo project calls and applications.');
+  console.log('Seeded demo education preview items and bookmarks.');
 }
 
 main()

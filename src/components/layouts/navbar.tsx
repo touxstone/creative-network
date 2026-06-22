@@ -2,6 +2,7 @@ import Link from 'next/link';
 import {
   Bell,
   BriefcaseBusiness,
+  GraduationCap,
   LogOut,
   Megaphone,
   MessagesSquare,
@@ -23,6 +24,7 @@ function getNavItems(userId: string) {
     { href: '/messages', label: 'Messages', icon: MessagesSquare },
     { href: '/projects', label: 'Projects', icon: BriefcaseBusiness },
     { href: '/calls', label: 'Calls', icon: Megaphone },
+    { href: '/education', label: 'Education', icon: GraduationCap },
     { href: `/profile/${userId}`, label: 'Profile', icon: UserRound },
   ];
 }

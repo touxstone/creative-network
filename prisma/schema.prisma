@@ -37,6 +37,7 @@ model User {
   projectApplications      ProjectApplication[]
   notificationsReceived    Notification[]            @relation("NotificationRecipient")
   notificationsActed       Notification[]            @relation("NotificationActor")
+  learningBookmarks        LearningBookmark[]
 
   connectionsInitiated Connection[]  @relation("ConnectionsInitiated")
   connectionsReceived  Connection[]  @relation("ConnectionsReceived")
@@ -339,4 +340,47 @@ model Notification {
   @@index([recipientId, createdAt])
   @@index([actorId])
   @@map("notifications")
+}
+
+model LearningItem {
+  id              String             @id @default(cuid())
+  slug            String             @unique
+  title           String
+  summary         String
+  description     String             @db.Text
+  format          String
+  discipline      String
+  language        String
+  level           String
+  durationMinutes Int
+  instructorName  String
+  instructorRole  String?
+  provider        String?
+  startsAt        DateTime?
+  externalUrl     String?
+  status          String             @default("PUBLISHED")
+  bookmarks       LearningBookmark[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @default(now()) @updatedAt
+
+  @@index([status])
+  @@index([language])
+  @@index([level])
+  @@index([discipline])
+  @@index([format])
+  @@map("learning_items")
+}
+
+model LearningBookmark {
+  id        String       @id @default(cuid())
+  itemId    String
+  item      LearningItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  note      String?
+  createdAt DateTime     @default(now())
+
+  @@unique([itemId, userId])
+  @@index([userId])
+  @@map("learning_bookmarks")
 }
