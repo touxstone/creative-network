@@ -15,6 +15,10 @@ const postIdSchema = z.object({
   postId: z.string().min(1),
 });
 
+const editPostSchema = postIdSchema.extend({
+  content: z.string().trim().min(1, 'Post cannot be empty.').max(2000),
+});
+
 const createCommentSchema = postIdSchema.extend({
   content: z.string().trim().min(1, 'Comment cannot be empty.').max(600),
 });
@@ -43,6 +47,40 @@ export async function createPostAction(formData: FormData) {
       authorId: userId,
     },
   });
+
+  revalidatePath('/feed');
+  redirect('/feed');
+}
+
+export async function editPostAction(formData: FormData) {
+  const userId = await requireUserId();
+  const parsed = editPostSchema.safeParse(Object.fromEntries(formData));
+
+  if (!parsed.success) {
+    redirect('/feed?error=edit');
+  }
+
+  const post = await prisma.post.findUnique({
+    where: { id: parsed.data.postId },
+    select: {
+      id: true,
+      authorId: true,
+      content: true,
+    },
+  });
+
+  if (!post || post.authorId !== userId) {
+    redirect('/feed?error=edit');
+  }
+
+  if (post.content !== parsed.data.content) {
+    await prisma.post.update({
+      where: { id: post.id },
+      data: {
+        content: parsed.data.content,
+      },
+    });
+  }
 
   revalidatePath('/feed');
   redirect('/feed');

@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { MessageSquare, Send, Trash2, ThumbsUp } from 'lucide-react';
+import { MessageSquare, Pencil, Send, Trash2, ThumbsUp } from 'lucide-react';
 import { auth } from '@/core/auth/auth';
 import {
   createCommentAction,
   createPostAction,
   deletePostAction,
+  editPostAction,
   toggleLikeAction,
 } from '@/features/social-feed/actions';
 import { getFeedPosts, getFeedStats } from '@/features/social-feed/queries';
@@ -40,6 +41,8 @@ function formatDate(date: Date) {
 
 function PostCard({ post, viewerId }: { post: FeedPost; viewerId: string }) {
   const canDelete = post.authorId === viewerId;
+  const canEdit = post.authorId === viewerId;
+  const isEdited = post.updatedAt.getTime() > post.createdAt.getTime() + 1000;
 
   return (
     <Card>
@@ -56,15 +59,41 @@ function PostCard({ post, viewerId }: { post: FeedPost; viewerId: string }) {
                 </Link>
                 <div className="text-sm text-muted-foreground">
                   {post.author.profession ?? 'Creative professional'} · {formatDate(post.createdAt)}
+                  {isEdited ? ` · edited ${formatDate(post.updatedAt)}` : null}
                 </div>
               </div>
-              {canDelete ? (
-                <form action={deletePostAction}>
-                  <input type="hidden" name="postId" value={post.id} />
-                  <Button variant="ghost" aria-label="Delete post" className="h-9 w-9 px-0">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </form>
+              {canEdit || canDelete ? (
+                <div className="flex items-center gap-1">
+                  {canEdit ? (
+                    <details className="group relative">
+                      <summary className="list-none">
+                        <Button variant="ghost" aria-label="Edit post" className="h-9 w-9 px-0">
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </summary>
+                      <div className="absolute right-0 top-10 z-10 w-[min(24rem,calc(100vw-3rem))] rounded-lg border border-border bg-white p-4 shadow-panel">
+                        <form action={editPostAction} className="space-y-3">
+                          <input type="hidden" name="postId" value={post.id} />
+                          <Textarea name="content" defaultValue={post.content} required maxLength={2000} />
+                          <div className="flex justify-end">
+                            <Button>
+                              <Pencil className="h-4 w-4" />
+                              Save edit
+                            </Button>
+                          </div>
+                        </form>
+                      </div>
+                    </details>
+                  ) : null}
+                  {canDelete ? (
+                    <form action={deletePostAction}>
+                      <input type="hidden" name="postId" value={post.id} />
+                      <Button variant="ghost" aria-label="Delete post" className="h-9 w-9 px-0">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </form>
+                  ) : null}
+                </div>
               ) : null}
             </div>
 
@@ -184,7 +213,7 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
             <CardTitle>Social Feed MVP</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>Posts, likes, comments, and delete-own-post are now persisted in PostgreSQL.</p>
+            <p>Posts, likes, comments, edit-own-post, and delete-own-post are persisted in PostgreSQL.</p>
             <p>Next: pagination, richer media, notifications, and network-aware ranking.</p>
           </CardContent>
         </Card>
