@@ -66,10 +66,11 @@ function PostCard({ post, viewerId }: { post: FeedPost; viewerId: string }) {
                 <div className="flex items-center gap-1">
                   {canEdit ? (
                     <details className="group relative">
-                      <summary className="list-none">
-                        <Button variant="ghost" aria-label="Edit post" className="h-9 w-9 px-0">
-                          <Pencil className="h-4 w-4" />
-                        </Button>
+                      <summary
+                        aria-label="Edit post"
+                        className="inline-flex h-9 w-9 cursor-pointer list-none items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-muted [&::-webkit-details-marker]:hidden"
+                      >
+                        <Pencil className="h-4 w-4" />
                       </summary>
                       <div className="absolute right-0 top-10 z-10 w-[min(24rem,calc(100vw-3rem))] rounded-lg border border-border bg-white p-4 shadow-panel">
                         <form action={editPostAction} className="space-y-3">
