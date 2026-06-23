@@ -4,6 +4,7 @@ export const notificationTypes = [
   'POST_LIKE',
   'POST_COMMENT',
   'MESSAGE',
+  'SERVICE_INQUIRY',
 ] as const;
 
 export type NotificationType = (typeof notificationTypes)[number];
@@ -14,4 +15,5 @@ export const notificationTypeLabels: Record<NotificationType, string> = {
   POST_LIKE: 'Post like',
   POST_COMMENT: 'Post comment',
   MESSAGE: 'Message',
+  SERVICE_INQUIRY: 'Service inquiry',
 };

@@ -38,6 +38,9 @@ model User {
   notificationsReceived    Notification[]            @relation("NotificationRecipient")
   notificationsActed       Notification[]            @relation("NotificationActor")
   learningBookmarks        LearningBookmark[]
+  serviceListings          ServiceListing[]
+  serviceInquiriesSent     ServiceInquiry[]           @relation("ServiceInquirySender")
+  serviceInquiriesReceived ServiceInquiry[]           @relation("ServiceInquiryRecipient")
 
   connectionsInitiated Connection[]  @relation("ConnectionsInitiated")
   connectionsReceived  Connection[]  @relation("ConnectionsReceived")
@@ -383,4 +386,49 @@ model LearningBookmark {
   @@unique([itemId, userId])
   @@index([userId])
   @@map("learning_bookmarks")
+}
+
+model ServiceListing {
+  id            String           @id @default(cuid())
+  title         String
+  slug          String           @unique
+  summary       String
+  description   String           @db.Text
+  category      String
+  language      String?
+  deliveryMode  String           @default("REMOTE")
+  rateNote      String?
+  availability  String?
+  status        String           @default("ACTIVE")
+  ownerId       String
+  owner         User             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  inquiries     ServiceInquiry[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @default(now()) @updatedAt
+
+  @@index([ownerId])
+  @@index([category])
+  @@index([status])
+  @@index([createdAt])
+  @@map("service_listings")
+}
+
+model ServiceInquiry {
+  id          String         @id @default(cuid())
+  listingId   String
+  listing     ServiceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  senderId    String
+  sender      User           @relation("ServiceInquirySender", fields: [senderId], references: [id], onDelete: Cascade)
+  recipientId String
+  recipient   User           @relation("ServiceInquiryRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  message     String         @db.Text
+  status      String         @default("NEW")
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @default(now()) @updatedAt
+
+  @@index([listingId])
+  @@index([senderId])
+  @@index([recipientId])
+  @@index([status])
+  @@map("service_inquiries")
 }

@@ -855,6 +855,163 @@ async function main() {
     },
   });
 
+  await prisma.serviceListing.upsert({
+    where: { slug: 'script-notes-for-contained-drama-leahmorgan' },
+    update: {
+      ownerId: leah.id,
+      title: 'Script notes for contained drama',
+      summary:
+        'Focused notes for short scripts, proof-of-concept scenes, and lean drama pilots.',
+      description:
+        'I review short scripts and early pitch pilots with attention to structure, character pressure, scene economy, and production feasibility. Useful for teams preparing a proof-of-concept, a table read, or a compact rewrite plan.',
+      category: 'Script notes',
+      language: 'English / Español',
+      deliveryMode: 'REMOTE',
+      rateNote: 'Preview call free; quote after brief.',
+      availability: 'Two review slots per month.',
+      status: 'ACTIVE',
+    },
+    create: {
+      id: 'script-notes-for-contained-drama-leahmorgan',
+      slug: 'script-notes-for-contained-drama-leahmorgan',
+      ownerId: leah.id,
+      title: 'Script notes for contained drama',
+      summary:
+        'Focused notes for short scripts, proof-of-concept scenes, and lean drama pilots.',
+      description:
+        'I review short scripts and early pitch pilots with attention to structure, character pressure, scene economy, and production feasibility. Useful for teams preparing a proof-of-concept, a table read, or a compact rewrite plan.',
+      category: 'Script notes',
+      language: 'English / Español',
+      deliveryMode: 'REMOTE',
+      rateNote: 'Preview call free; quote after brief.',
+      availability: 'Two review slots per month.',
+      status: 'ACTIVE',
+    },
+  });
+
+  await prisma.serviceListing.upsert({
+    where: { slug: 'casting-shortlist-and-self-tape-brief-aishagrant' },
+    update: {
+      ownerId: aisha.id,
+      title: 'Casting shortlist and self-tape brief',
+      summary:
+        'Role briefs, shortlist logic, and self-tape notes for indie productions and teasers.',
+      description:
+        'I help teams turn a role into a clear performer brief, define shortlist criteria, and prepare self-tape instructions that respect the performer while making review easier for directors and producers.',
+      category: 'Casting',
+      language: 'English',
+      deliveryMode: 'HYBRID',
+      rateNote: 'Scoped per role or small slate.',
+      availability: 'Remote review, Los Angeles sessions by arrangement.',
+      status: 'ACTIVE',
+    },
+    create: {
+      id: 'casting-shortlist-and-self-tape-brief-aishagrant',
+      slug: 'casting-shortlist-and-self-tape-brief-aishagrant',
+      ownerId: aisha.id,
+      title: 'Casting shortlist and self-tape brief',
+      summary:
+        'Role briefs, shortlist logic, and self-tape notes for indie productions and teasers.',
+      description:
+        'I help teams turn a role into a clear performer brief, define shortlist criteria, and prepare self-tape instructions that respect the performer while making review easier for directors and producers.',
+      category: 'Casting',
+      language: 'English',
+      deliveryMode: 'HYBRID',
+      rateNote: 'Scoped per role or small slate.',
+      availability: 'Remote review, Los Angeles sessions by arrangement.',
+      status: 'ACTIVE',
+    },
+  });
+
+  await prisma.serviceListing.upsert({
+    where: { slug: 'composer-cues-for-proof-of-concepts-nicoreyes' },
+    update: {
+      ownerId: nico.id,
+      title: 'Composer cues for proof-of-concepts',
+      summary:
+        'Small cue packs, tone sketches, and trailer-like music references for early edits.',
+      description:
+        'I create compact music sketches for teasers, short films, and proof-of-concept edits. Best for teams that need emotional direction, pacing references, and a practical conversation between composer, editor, and producer.',
+      category: 'Music',
+      language: 'Instrumental / Català / Español',
+      deliveryMode: 'REMOTE',
+      rateNote: 'Quote depends on cue count and usage.',
+      availability: 'Available for July remote collaborations.',
+      status: 'ACTIVE',
+    },
+    create: {
+      id: 'composer-cues-for-proof-of-concepts-nicoreyes',
+      slug: 'composer-cues-for-proof-of-concepts-nicoreyes',
+      ownerId: nico.id,
+      title: 'Composer cues for proof-of-concepts',
+      summary:
+        'Small cue packs, tone sketches, and trailer-like music references for early edits.',
+      description:
+        'I create compact music sketches for teasers, short films, and proof-of-concept edits. Best for teams that need emotional direction, pacing references, and a practical conversation between composer, editor, and producer.',
+      category: 'Music',
+      language: 'Instrumental / Català / Español',
+      deliveryMode: 'REMOTE',
+      rateNote: 'Quote depends on cue count and usage.',
+      availability: 'Available for July remote collaborations.',
+      status: 'ACTIVE',
+    },
+  });
+
+  await prisma.serviceListing.upsert({
+    where: { slug: 'producer-packaging-for-short-form-projects-marasoler' },
+    update: {
+      ownerId: mara.id,
+      title: 'Producer packaging for short-form projects',
+      summary:
+        'Practical packaging notes for proof-of-concept shorts, decks, teams, and next steps.',
+      description:
+        'I help creative teams clarify what a short-form proof-of-concept needs before outreach: logline, comparable references, collaborator roles, small-budget assumptions, and a lightweight next-step plan.',
+      category: 'Production',
+      language: 'Español / English',
+      deliveryMode: 'REMOTE',
+      rateNote: 'Initial scoping conversation free.',
+      availability: 'Limited availability around festival deadlines.',
+      status: 'ACTIVE',
+    },
+    create: {
+      id: 'producer-packaging-for-short-form-projects-marasoler',
+      slug: 'producer-packaging-for-short-form-projects-marasoler',
+      ownerId: mara.id,
+      title: 'Producer packaging for short-form projects',
+      summary:
+        'Practical packaging notes for proof-of-concept shorts, decks, teams, and next steps.',
+      description:
+        'I help creative teams clarify what a short-form proof-of-concept needs before outreach: logline, comparable references, collaborator roles, small-budget assumptions, and a lightweight next-step plan.',
+      category: 'Production',
+      language: 'Español / English',
+      deliveryMode: 'REMOTE',
+      rateNote: 'Initial scoping conversation free.',
+      availability: 'Limited availability around festival deadlines.',
+      status: 'ACTIVE',
+    },
+  });
+
+  await prisma.serviceInquiry.upsert({
+    where: { id: 'demo-inquiry-mara-to-leah-script-notes' },
+    update: {
+      listingId: 'script-notes-for-contained-drama-leahmorgan',
+      senderId: mara.id,
+      recipientId: leah.id,
+      message:
+        'I would like notes on whether the contained drama proof-of-concept is clear enough for a producer read and a small table session.',
+      status: 'NEW',
+    },
+    create: {
+      id: 'demo-inquiry-mara-to-leah-script-notes',
+      listingId: 'script-notes-for-contained-drama-leahmorgan',
+      senderId: mara.id,
+      recipientId: leah.id,
+      message:
+        'I would like notes on whether the contained drama proof-of-concept is clear enough for a producer read and a small table session.',
+      status: 'NEW',
+    },
+  });
+
   console.log('Seeded demo users:');
   console.log('mara@creativenetwork.test / DemoPassword123');
   console.log('leah@creativenetwork.test / DemoPassword123');
@@ -866,6 +1023,7 @@ async function main() {
   console.log('Seeded demo projects and portfolio links.');
   console.log('Seeded demo project calls and applications.');
   console.log('Seeded demo education preview items and bookmarks.');
+  console.log('Seeded demo marketplace services and inquiries.');
 }
 
 main()

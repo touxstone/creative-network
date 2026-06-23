@@ -9,6 +9,7 @@ import {
   MessageSquare,
   Network,
   Search,
+  Store,
   UserRound,
 } from 'lucide-react';
 import type { Session } from 'next-auth';
@@ -25,6 +26,7 @@ function getNavItems(userId: string) {
     { href: '/projects', label: 'Projects', icon: BriefcaseBusiness },
     { href: '/calls', label: 'Calls', icon: Megaphone },
     { href: '/education', label: 'Education', icon: GraduationCap },
+    { href: '/marketplace', label: 'Marketplace', icon: Store },
     { href: `/profile/${userId}`, label: 'Profile', icon: UserRound },
   ];
 }
