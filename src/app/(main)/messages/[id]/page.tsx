@@ -253,10 +253,18 @@ function MessageBubble({
                   className="text-foreground"
                   maxLength={160}
                 />
-                <Button variant="outline" className={messageActionButtonClass}>
-                  <Edit3 className="h-3.5 w-3.5" />
-                  Save edit
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  <Button type="submit" variant="outline" className={messageActionButtonClass}>
+                    <Edit3 className="h-3.5 w-3.5" />
+                    Save edit
+                  </Button>
+                  <Link
+                    href={`/messages/${conversationId}`}
+                    className="inline-flex h-8 items-center justify-center rounded-md border border-border bg-white px-3 text-xs font-medium text-foreground transition-colors hover:bg-muted"
+                  >
+                    Cancel
+                  </Link>
+                </div>
               </form>
               {message.editHistory.length > 0 ? (
                 <p className="mt-2 text-xs opacity-80">
