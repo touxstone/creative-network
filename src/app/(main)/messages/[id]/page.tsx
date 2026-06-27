@@ -8,6 +8,11 @@ import {
   sendMessageAction,
   updateConversationTitleAction,
 } from '@/features/messaging/actions';
+import {
+  pinnedColorLabels,
+  pinnedColorValues,
+  type PinnedColor,
+} from '@/features/messaging/constants';
 import { getConversationThread } from '@/features/messaging/queries';
 import type { ThreadMessage } from '@/features/messaging/types';
 import { Button } from '@/components/ui/button';
@@ -18,6 +23,65 @@ import { cn } from '@/lib/utils';
 
 interface ConversationPageProps {
   params: Promise<{ id: string }>;
+}
+
+const pinnedToneStyles: Record<
+  PinnedColor,
+  {
+    card: string;
+    icon: string;
+    badge: string;
+    bubble: string;
+    swatch: string;
+  }
+> = {
+  rose: {
+    card: 'border-rose-200 bg-rose-50',
+    icon: 'text-rose-700',
+    badge: 'bg-rose-100 text-rose-900',
+    bubble: 'border-rose-200 bg-rose-50 text-rose-950',
+    swatch: 'border-rose-300 bg-rose-200 hover:bg-rose-300',
+  },
+  amber: {
+    card: 'border-amber-200 bg-amber-50',
+    icon: 'text-amber-700',
+    badge: 'bg-amber-100 text-amber-950',
+    bubble: 'border-amber-200 bg-amber-50 text-amber-950',
+    swatch: 'border-amber-300 bg-amber-200 hover:bg-amber-300',
+  },
+  teal: {
+    card: 'border-teal-200 bg-teal-50',
+    icon: 'text-teal-700',
+    badge: 'bg-teal-100 text-teal-950',
+    bubble: 'border-teal-200 bg-teal-50 text-teal-950',
+    swatch: 'border-teal-300 bg-teal-200 hover:bg-teal-300',
+  },
+  sky: {
+    card: 'border-sky-200 bg-sky-50',
+    icon: 'text-sky-700',
+    badge: 'bg-sky-100 text-sky-950',
+    bubble: 'border-sky-200 bg-sky-50 text-sky-950',
+    swatch: 'border-sky-300 bg-sky-200 hover:bg-sky-300',
+  },
+  violet: {
+    card: 'border-violet-200 bg-violet-50',
+    icon: 'text-violet-700',
+    badge: 'bg-violet-100 text-violet-950',
+    bubble: 'border-violet-200 bg-violet-50 text-violet-950',
+    swatch: 'border-violet-300 bg-violet-200 hover:bg-violet-300',
+  },
+};
+
+function getPinnedTone(color: string | null | undefined) {
+  const pinnedColor = pinnedColorValues.includes(color as PinnedColor)
+    ? (color as PinnedColor)
+    : 'rose';
+
+  return {
+    color: pinnedColor,
+    label: pinnedColorLabels[pinnedColor],
+    styles: pinnedToneStyles[pinnedColor],
+  };
 }
 
 function getInitials(name: string | null | undefined, fallback = 'CN') {
@@ -38,13 +102,17 @@ function MessageBubble({
   conversationId,
   viewerId,
   isPinned,
+  pinnedColor,
 }: {
   message: ThreadMessage;
   conversationId: string;
   viewerId: string;
   isPinned: boolean;
+  pinnedColor: string;
 }) {
   const isOwnMessage = message.senderId === viewerId;
+  const pinnedTone = getPinnedTone(pinnedColor);
+  const isInvertedBubble = isOwnMessage && !isPinned;
   const messageActionButtonClass = 'h-8 border-border bg-white text-foreground hover:bg-muted';
 
   return (
@@ -52,7 +120,9 @@ function MessageBubble({
       <div
         className={cn(
           'max-w-[min(38rem,90%)] rounded-lg border p-4',
-          isOwnMessage
+          isPinned
+            ? pinnedTone.styles.bubble
+            : isOwnMessage
             ? 'border-primary bg-primary text-primary-foreground'
             : 'border-border bg-white',
         )}
@@ -68,7 +138,11 @@ function MessageBubble({
             })}
           </span>
           {message.editedAt ? <span>edited</span> : null}
-          {isPinned ? <span>pinned</span> : null}
+          {isPinned ? (
+            <span className={cn('rounded-full px-2 py-0.5 text-[0.7rem] font-medium', pinnedTone.styles.badge)}>
+              pinned
+            </span>
+          ) : null}
           {message.editCount > 0 ? <span>{message.editCount} revision(s)</span> : null}
         </div>
 
@@ -76,7 +150,7 @@ function MessageBubble({
           <div
             className={cn(
               'mb-3 rounded-md border px-3 py-2 text-xs leading-5',
-              isOwnMessage ? 'border-white/30 bg-white/10' : 'border-border bg-muted',
+              isInvertedBubble ? 'border-white/30 bg-white/10' : 'border-border bg-white/70',
             )}
           >
             <div className="font-semibold">
@@ -93,7 +167,7 @@ function MessageBubble({
             <summary
               className={cn(
                 'inline-flex h-8 cursor-pointer list-none items-center gap-2 rounded-md border px-3 text-xs font-medium',
-                isOwnMessage ? 'border-white/30 hover:bg-white/10' : 'border-border hover:bg-muted',
+                isInvertedBubble ? 'border-white/30 hover:bg-white/10' : 'border-border bg-white hover:bg-muted',
               )}
             >
               <Reply className="h-3.5 w-3.5" />
@@ -116,21 +190,49 @@ function MessageBubble({
             </form>
           </details>
 
-          <form action={pinMessageAction}>
-            <input type="hidden" name="conversationId" value={conversationId} />
-            <input type="hidden" name="messageId" value={message.id} />
-            <Button variant="outline" className={messageActionButtonClass}>
+          <details className="group">
+            <summary
+              className={cn(
+                'inline-flex h-8 cursor-pointer list-none items-center gap-2 rounded-md border px-3 text-xs font-medium',
+                isInvertedBubble ? 'border-white/30 hover:bg-white/10' : 'border-border bg-white hover:bg-muted',
+              )}
+            >
               <Pin className="h-3.5 w-3.5" />
               {isPinned ? 'Pinned' : 'Pin'}
-            </Button>
-          </form>
+            </summary>
+            <div className="mt-3 flex w-fit flex-wrap gap-1 rounded-md border border-border bg-white p-2 shadow-sm">
+              {pinnedColorValues.map((color) => {
+                const tone = getPinnedTone(color);
+
+                return (
+                  <form key={color} action={pinMessageAction}>
+                    <input type="hidden" name="conversationId" value={conversationId} />
+                    <input type="hidden" name="messageId" value={message.id} />
+                    <input type="hidden" name="pinnedColor" value={color} />
+                    <button
+                      type="submit"
+                      aria-label={`Pin as ${tone.label}`}
+                      title={tone.label}
+                      className={cn(
+                        'grid h-7 w-7 place-items-center rounded-full border text-[0.65rem] font-semibold text-transparent transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                        tone.styles.swatch,
+                        isPinned && pinnedTone.color === color ? 'ring-2 ring-foreground/40 ring-offset-2' : '',
+                      )}
+                    >
+                      {tone.label[0]}
+                    </button>
+                  </form>
+                );
+              })}
+            </div>
+          </details>
 
           {isOwnMessage ? (
             <details className="group w-full">
               <summary
                 className={cn(
                   'inline-flex h-8 cursor-pointer list-none items-center gap-2 rounded-md border px-3 text-xs font-medium',
-                  isOwnMessage ? 'border-white/30 hover:bg-white/10' : 'border-border hover:bg-muted',
+                  isInvertedBubble ? 'border-white/30 hover:bg-white/10' : 'border-border bg-white hover:bg-muted',
                 )}
               >
                 <Edit3 className="h-3.5 w-3.5" />
@@ -190,6 +292,7 @@ export default async function ConversationPage({ params }: ConversationPageProps
   const fallbackTitle =
     otherParticipants.map((user) => user.name ?? user.username).join(', ') || 'Conversation';
   const title = conversation.title ?? fallbackTitle;
+  const pinnedTone = getPinnedTone(conversation.pinnedColor);
 
   return (
     <div className="mx-auto max-w-4xl space-y-5">
@@ -230,16 +333,26 @@ export default async function ConversationPage({ params }: ConversationPageProps
       </Card>
 
       {conversation.pinnedMessage ? (
-        <Card>
+        <Card className={cn('border', pinnedTone.styles.card)}>
           <CardContent className="p-5">
             <div className="flex items-start gap-3">
-              <Pin className="mt-1 h-4 w-4 shrink-0 text-accent" />
+              <Pin className={cn('mt-1 h-4 w-4 shrink-0', pinnedTone.styles.icon)} />
               <div className="min-w-0">
-                <h2 className="font-semibold">Pinned context</h2>
-                <p className="mt-2 line-clamp-3 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="font-semibold">Pinned context</h2>
+                  <span
+                    className={cn(
+                      'rounded-full px-2 py-0.5 text-[0.7rem] font-medium',
+                      pinnedTone.styles.badge,
+                    )}
+                  >
+                    {pinnedTone.label}
+                  </span>
+                </div>
+                <p className="mt-2 line-clamp-3 whitespace-pre-wrap text-sm leading-6 text-foreground/80">
                   {conversation.pinnedMessage.content}
                 </p>
-                <p className="mt-2 text-xs text-muted-foreground">
+                <p className="mt-2 text-xs text-foreground/60">
                   {getMessageAuthorLabel(conversation.pinnedMessage, userId)}
                   {conversation.pinnedMessage.editedAt ? ' · edited' : ''}
                 </p>
@@ -258,6 +371,7 @@ export default async function ConversationPage({ params }: ConversationPageProps
               conversationId={conversation.id}
               viewerId={userId}
               isPinned={message.id === conversation.pinnedMessageId}
+              pinnedColor={conversation.pinnedColor}
             />
           ))
         ) : (

@@ -49,6 +49,7 @@ export interface MessageThread {
   id: string;
   title: string | null;
   pinnedMessageId: string | null;
+  pinnedColor: string;
   pinnedMessage: ThreadMessage | null;
   participants: Array<{
     user: MessagingUser;

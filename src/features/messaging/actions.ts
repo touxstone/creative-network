@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { auth } from '@/core/auth/auth';
 import { prisma } from '@/lib/db/prisma';
 import { createNotification } from '@/features/notifications/actions';
+import { pinnedColorValues } from './constants';
 
 const startConversationSchema = z.object({
   recipientId: z.string().min(1),
@@ -26,6 +27,7 @@ const editMessageSchema = z.object({
 const pinMessageSchema = z.object({
   conversationId: z.string().min(1),
   messageId: z.string().min(1),
+  pinnedColor: z.enum(pinnedColorValues).default('rose'),
 });
 
 const updateConversationTitleSchema = z.object({
@@ -265,6 +267,7 @@ export async function pinMessageAction(formData: FormData) {
     where: { id: parsed.data.conversationId },
     data: {
       pinnedMessageId: parsed.data.messageId,
+      pinnedColor: parsed.data.pinnedColor,
       updatedAt: new Date(),
     },
   });

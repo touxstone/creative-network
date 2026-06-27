@@ -169,6 +169,7 @@ model Conversation {
   id              String                    @id @default(cuid())
   title           String?
   pinnedMessageId String?
+  pinnedColor     String                    @default("rose")
   pinnedMessage   Message?                  @relation("PinnedMessage", fields: [pinnedMessageId], references: [id], onDelete: SetNull)
   participants    ConversationParticipant[]
   messages        Message[]

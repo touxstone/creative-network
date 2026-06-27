@@ -256,6 +256,7 @@ async function main() {
     where: { id: 'demo-conversation-mara-leah' },
     data: {
       pinnedMessageId: 'demo-message-leah-to-mara',
+      pinnedColor: 'teal',
     },
   });
 
