@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { CancelEditButton } from '@/components/messages/cancel-edit-button';
 import { cn } from '@/lib/utils';
 
 interface ConversationPageProps {
@@ -258,12 +259,7 @@ function MessageBubble({
                     <Edit3 className="h-3.5 w-3.5" />
                     Save edit
                   </Button>
-                  <Link
-                    href={`/messages/${conversationId}`}
-                    className="inline-flex h-8 items-center justify-center rounded-md border border-border bg-white px-3 text-xs font-medium text-foreground transition-colors hover:bg-muted"
-                  >
-                    Cancel
-                  </Link>
+                  <CancelEditButton />
                 </div>
               </form>
               {message.editHistory.length > 0 ? (
